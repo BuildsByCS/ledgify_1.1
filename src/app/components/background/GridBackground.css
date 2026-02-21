@@ -1,0 +1,15 @@
+/* ─── GRID BACKGROUND ─── */
+.grid-background {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.grid-background__cells {
+  position: absolute;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+}
