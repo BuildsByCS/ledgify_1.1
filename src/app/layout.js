@@ -1,6 +1,7 @@
 import "./globals.css";
 import SmoothScroll from "./components/utils/SmoothScroll";
 import ScrollIndicator from "./components/utils/ScrollIndicator";
+import Footer from "./components/Footer";
 
 export const metadata = {
   title: "Ledgify",
@@ -14,6 +15,7 @@ export default function RootLayout({ children }) {
         <SmoothScroll>
           <ScrollIndicator />
           {children}
+          <Footer />
         </SmoothScroll>
       </body>
     </html>

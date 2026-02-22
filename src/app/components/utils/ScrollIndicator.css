@@ -10,7 +10,7 @@
   height: clamp(32px, 6vh, 60px);
   border-radius: 999px;
   overflow: hidden;
-  background: rgb(72, 54, 151);
+  background: rgb(55, 37, 136);
 }
 
 .scroll-indicator--right { right: clamp(5px, 2vw, 28px); }
@@ -23,7 +23,7 @@
   box-shadow: 0 0 6px var(--accent-glow);
   background: linear-gradient(
     to bottom,
-    var(--accent-light),
-    var(--accent)
+   rgba(108, 99, 255, 0.8),
+   #807afc
   );
 }
