@@ -2,7 +2,11 @@
 
 import { ReactLenis } from 'lenis/react';
 import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useEffect, useRef } from 'react';
+import { usePathname } from 'next/navigation';
+
+gsap.registerPlugin(ScrollTrigger);
 
 /**
  * Easing function: custom quintic ease-out.
@@ -19,6 +23,7 @@ function lenisEasing(t) {
 
 export default function SmoothScroll({ children }) {
     const lenisRef = useRef(null);
+    const pathname = usePathname();
 
     useEffect(() => {
         /**
@@ -38,6 +43,15 @@ export default function SmoothScroll({ children }) {
             gsap.ticker.remove(update);
         };
     }, []);
+
+    useEffect(() => {
+        // Refresh ScrollTrigger calculations after a route change
+        const timeoutId = setTimeout(() => {
+            ScrollTrigger.refresh();
+        }, 100);
+
+        return () => clearTimeout(timeoutId);
+    }, [pathname]);
 
     return (
         <ReactLenis
