@@ -1,9 +1,11 @@
-import GridBackground from "./components/background/GridBackground";
+import CtaSection from "./components/Home/CtaSection";
+import Landing from "./components/Home/Landing";
 
 export default function Home() {
   return (
-    <main className="h-[300vh]">
-      <GridBackground />
+    <main className="">
+      <Landing />
+      <CtaSection />
     </main>
   );
 }

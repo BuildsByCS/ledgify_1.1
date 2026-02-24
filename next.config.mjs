@@ -2,6 +2,14 @@
 const nextConfig = {
   /* config options here */
   reactCompiler: true,
+  async rewrites() {
+    return [
+      {
+        source: '/api/:path*',
+        destination: 'https://ledgify.onrender.com/api/:path*', // Proxy to Backend
+      },
+    ]
+  },
 };
 
 export default nextConfig;
