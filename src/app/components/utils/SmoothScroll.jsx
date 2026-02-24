@@ -10,8 +10,6 @@ gsap.registerPlugin(ScrollTrigger);
 
 /**
  * Easing function: custom quintic ease-out.
- * Used on award-winning sites (Resn, darkroom.engineering).
- * Feels weighty at the start, then floats to a perfect stop.
  *
  * @param {number} t  – progress [0, 1]
  * @returns {number}
