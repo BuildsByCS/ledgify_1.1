@@ -3,6 +3,8 @@ import SmoothScroll from "./components/utils/SmoothScroll";
 import ScrollIndicator from "./components/utils/ScrollIndicator";
 import Footer from "./components/Footer";
 import GridBackground from "./components/background/GridBackground";
+import NavBar from "./components/NavBar";
+import StoreProvider from "./StoreProvider";
 
 export const metadata = {
   title: "Ledgify",
@@ -13,13 +15,17 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className="antialiased">
-        <SmoothScroll>
-          <GridBackground />
-          <ScrollIndicator />
-          {children}
-          <Footer />
-        </SmoothScroll>
+        <StoreProvider>
+          <SmoothScroll>
+            <GridBackground />
+            <ScrollIndicator />
+            <NavBar />
+            {children}
+            <Footer />
+          </SmoothScroll>
+        </StoreProvider>
       </body>
     </html>
   );
 }
+

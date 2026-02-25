@@ -5,6 +5,8 @@ import { useForm } from 'react-hook-form';
 import { useState, useRef, useEffect } from 'react';
 import { gsap } from 'gsap';
 import api from '../lib/api';
+import { useDispatch } from 'react-redux';
+import { loginSuccess } from '../../../lib/features/auth/authSlice';
 
 function EyeIcon({ open }) {
     return open ? (
@@ -69,8 +71,10 @@ export default function LoginForm({ onToast }) {
     const [success, setSuccess] = useState(null);
     const formRef = useRef(null);
     const btnRef = useRef(null);
+    const dispatch = useDispatch();
 
     const { register, handleSubmit, formState: { errors } } = useForm({ mode: 'onTouched' });
+
 
     useEffect(() => {
         if (!formRef.current) return;
@@ -81,24 +85,31 @@ export default function LoginForm({ onToast }) {
         );
     }, []);
 
+
     const shake = () =>
         gsap.fromTo(formRef.current, { x: 0 }, {
             keyframes: { x: [0, -10, 10, -8, 8, -4, 0] }, duration: 0.5, ease: 'power2.inOut',
         });
 
+
     const onSubmit = async (data) => {
         setIsLoading(true);
         gsap.to(btnRef.current, { scale: 0.97, duration: 0.1 });
+
         try {
             // withCredentials:true → browser stores any Set-Cookie the backend sends
-            await api.post('/api/auth/login', {
+            const res = await api.post('/api/auth/login', {
                 email: data.email,
                 password: data.password,
             });
 
             gsap.to(btnRef.current, { scale: 1, duration: 0.2 });
-            onToast({ type: 'success', message: '✅ Logged in successfully!' });
+            onToast({ type: 'success', message: 'Logged in successfully!' });
             setSuccess(data.email);
+
+            // Update auth context with full backend response
+            const userData = res.data?.user || res.data;
+            dispatch(loginSuccess(userData));
 
             // Redirect after 2 seconds to let the success animation play
             setTimeout(() => {

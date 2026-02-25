@@ -8,4 +8,23 @@ const api = axios.create({
   headers: { 'Content-Type': 'application/json' },
 });
 
+
+// an interceptor to handle 401 unauthorized responses (e.g., token expiry)
+api.interceptors.response.use(
+  (response) => {
+    return response;
+  },
+  (error) => {
+    if (error.response && error.response.status === 401) {
+      if (typeof window !== 'undefined') {
+
+        if (window.location.pathname !== '/') {
+            window.location.href = '/';
+        }
+      }
+    }
+    return Promise.reject(error);
+  }
+);
+
 export default api;
