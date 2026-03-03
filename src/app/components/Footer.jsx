@@ -5,7 +5,7 @@ import TextReveal from './utils/TextReveal';
 
 export default function Footer() {
     return (
-        <div className="relative z-[10] w-[100vw] p-[5%]">
+        <div className="relative z-5 w-[100vw] p-[5%]">
             <div className="flex justify-between items-end">
                 <div>
                     <CenterLetterStagger

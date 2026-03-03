@@ -152,21 +152,20 @@ export default function NavBar() {
     return (
         <nav
             ref={navRef}
-            className="fixed top-0 left-0 w-full z-[100] px-6 py-4 flex items-center justify-between bg-[#0c0f23]/20 backdrop-blur-md border-b border-white/5 text-white"
+            className="fixed top-0 left-0 w-full z-[100] px-[5%] md:px-10 py-4 flex items-center justify-between bg-[#0c0f23]/20 backdrop-blur-md border-b border-white/5 text-white"
         >
-            <div className=" pl-[5%] py-2">
+            <div className=" py-2">
                 <Link href="/" className="text-lg sm:text-3xl font-medium bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400 tracking-wide select-none cursor-pointer">
                     Ledgify
                 </Link>
             </div>
 
             {user && (
-                <div className="flex items-center gap-4">
                     <div className="relative">
-                        <div className='flex items-center gap-4'>
+                        <div className='flex items-center justify-end gap-2'>
                             <button
                                 onClick={toggleDropdown}
-                                className="w-10 h-10 flex items-center justify-center rounded-full overflow-hidden border-2 border-indigo-500/30 hover:border-indigo-500 transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500/50 cursor-pointer"
+                                className="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center rounded-full overflow-hidden border-2 border-indigo-500/30 hover:border-indigo-500 transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500/50 cursor-pointer"
                             >
                                 <img
                                     src={`https://api.dicebear.com/7.x/shapes/svg?seed=${user?.name || 'User'}&backgroundColor=0c0f23`}
@@ -174,16 +173,16 @@ export default function NavBar() {
                                     className="w-full h-full object-cover bg-white"
                                 />
                             </button>
-                            <button
+                            {/* <button
                                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                                className="relative w-10 h-10 p-2 hover:bg-white/10 rounded-full transition-colors focus:outline-none cursor-pointer group flex items-center justify-center"
+                                className="relative w-8 h-8 sm:w-10 sm:h-10 p-2 hover:bg-white/10 rounded-full transition-colors focus:outline-none cursor-pointer group flex items-center justify-center"
                             >
                                 <div className="relative w-6 h-[14px]">
                                     <span className={`absolute right-0 bg-gray-300 group-hover:bg-white block transition-all duration-300 ease-out h-[2px] rounded-full ${isMobileMenuOpen ? 'w-6 top-1/2 -translate-y-1/2 rotate-45' : 'w-6 top-0'}`}></span>
                                     <span className={`absolute right-0 top-1/2 -translate-y-1/2 bg-gray-300 group-hover:bg-white block transition-all duration-300 ease-out h-[2px] rounded-full ${isMobileMenuOpen ? 'w-0 opacity-0' : 'w-4 group-hover:w-6'}`}></span>
                                     <span className={`absolute right-0 bg-gray-300 group-hover:bg-white block transition-all duration-300 ease-out h-[2px] rounded-full ${isMobileMenuOpen ? 'w-6 top-1/2 -translate-y-1/2 -rotate-45' : 'w-5 bottom-0 group-hover:w-6'}`}></span>
                                 </div>
-                            </button>
+                            </button> */}
                         </div>
 
                         {/* Dropdown Menu */}
@@ -221,7 +220,6 @@ export default function NavBar() {
                             </div>
                         )}
                     </div>
-                </div>
             )}
         </nav>
     );

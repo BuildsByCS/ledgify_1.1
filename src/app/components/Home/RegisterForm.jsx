@@ -56,8 +56,8 @@ export default function RegisterForm({ onSuccess, onToast }) {
         setIsLoading(true);
         gsap.to(btnRef.current, { scale: 0.97, duration: 0.1 });
         try {
-            await api.post('/api/auth/regsiter', {
-                name: data.name,
+            await api.post('/api/auth/register', {
+                username: data.name,
                 email: data.email,
                 password: data.password,
             });

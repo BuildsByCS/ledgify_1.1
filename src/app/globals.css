@@ -21,7 +21,32 @@
   --error: #ff6b8a;
   --success: #4ade80;
   --input-bg: rgba(255, 255, 255, 0.05);
+
+  --text-xs: clamp(0.4rem, 0.55rem + 0.3vw, 1rem);
+  --text-base: clamp(0.6rem, 0.65rem + 0.4vw, 1.125rem);
+  --text-md: clamp(0.8rem, 0.8rem + 0.8vw, 1.4rem);
+  --text-lg: clamp(1.5rem, 1.2rem + 1.5vw, 4rem);
+  --text-xl: clamp(1.5rem, 1.5rem + 1.5vw, 4.5rem);
+  --space-md: clamp(1rem, 0.8rem + 1vw, 1.5rem);
+  --space-lg: clamp(2rem, 1.5rem + 2vw, 4rem);
 }
+
+.small-text {
+  font-size: var(--text-xs);
+}
+.base-text{
+  font-size: var(--text-base);
+}
+.mid-text{
+  font-size: var(--text-md);
+}
+.xl-text{
+  font-size: var(--text-xl);
+}
+.large-text{
+  font-size: var(--text-lg);
+}
+
 
 /* ─── RESET ─── */
 *, *::before, *::after {
@@ -48,6 +73,17 @@ body {
 }
 *::-webkit-scrollbar {
   display: none; /* Chrome / Safari */
+}
+
+/* ─── RECHARTS: remove ALL focus outlines on click (desktop + mobile) ─── */
+.recharts-wrapper,
+.recharts-wrapper *,
+.recharts-wrapper *:focus,
+.recharts-wrapper svg,
+.recharts-wrapper svg *,
+.recharts-wrapper svg *:focus {
+  outline: none !important;
+  -webkit-tap-highlight-color: transparent;
 }
 
 /* ─── NOISE TEXTURE OVERLAY ─── */
