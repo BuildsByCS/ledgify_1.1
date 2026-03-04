@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef } from 'react';
 import {
-    X, TrendingUp, TrendingDown, Clock, CreditCard, AlertCircle,
+    X, TrendingUp, TrendingDown, Clock, CreditCard, AlertCircle, CheckCircle,
 } from 'lucide-react';
 import api from '../lib/api';
 import { useSelector } from 'react-redux';
@@ -144,7 +144,13 @@ export default function AccountDetailModal({ account, balance, onClose, onStatus
                 const res = await api.get(
                     `/api/accounts/ledger-list?accountId=${account._id}&page=1&limit=10`
                 );
-                setTransactions(res.data?.transactions ?? []);
+                const raw = res.data?.transactions ?? [];
+                const seen = new Set();
+                setTransactions(raw.filter((t) => {
+                    if (seen.has(t.transaction)) return false;
+                    seen.add(t.transaction);
+                    return true;
+                }));
                 setPage(1);
                 setTotalPages(res.data?.pagination?.totalPages ?? 1);
             } catch {
@@ -168,7 +174,12 @@ export default function AccountDetailModal({ account, balance, onClose, onStatus
             const res = await api.get(
                 `/api/accounts/ledger-list?accountId=${account._id}&page=${nextPage}&limit=10`
             );
-            setTransactions((prev) => [...prev, ...(res.data?.transactions ?? [])]);
+            setTransactions((prev) => {
+                const incoming = res.data?.transactions ?? [];
+                const seen = new Set(prev.map((t) => t.transaction));
+                const unique = incoming.filter((t) => !seen.has(t.transaction));
+                return [...prev, ...unique];
+            });
             setPage(nextPage);
             setTotalPages(res.data?.pagination?.totalPages ?? totalPages);
         } catch {
@@ -316,7 +327,7 @@ export default function AccountDetailModal({ account, balance, onClose, onStatus
                                     const time = new Date(tx.createdAt).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: false });
                                     return (
                                         <div
-                                            key={tx.transaction ?? i}
+                                            key={`${tx.transaction ?? 'tx'}-${i}`}
                                             className="flex items-center justify-between bg-white/[0.02] hover:bg-white/[0.04] border border-white/5 rounded-xl px-[clamp(0.625rem,2vw,1rem)] py-[clamp(0.5rem,1.5vw,0.75rem)] transition-colors"
                                         >
                                             <div className="flex items-center gap-[clamp(0.5rem,1.5vw,0.75rem)]">

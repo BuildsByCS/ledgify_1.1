@@ -23,20 +23,33 @@ function getStatusIcon(status) {
  *   error    {string|null}
  */
 export default function AccountsTable({ accounts, loading, error }) {
+    const [localAccounts, setLocalAccounts] = useState(accounts);
     const [accountBalance, setAccountBalance] = useState([]);
     const [selectedAccount, setSelectedAccount] = useState(null);
     const [selectedBalance, setSelectedBalance] = useState(null);
 
+    /* keep local copy in sync if parent re-fetches */
+    useEffect(() => { setLocalAccounts(accounts); }, [accounts]);
+
     useEffect(() => {
-        accounts.forEach(async (account) => {
+        localAccounts.forEach(async (account) => {
             const balance = await api.get(`/api/accounts/balance/${account._id}`);
             setAccountBalance((prev) => [...prev, balance.data.balance]);
         });
-    }, [accounts])
+    }, [localAccounts])
 
     const handleRowClick = (acc, idx) => {
         setSelectedAccount(acc);
         setSelectedBalance(accountBalance[idx] ?? null);
+    };
+
+    const handleStatusChange = (accountId, newStatus) => {
+        /* update table row immediately */
+        setLocalAccounts((prev) =>
+            prev.map((a) => (a._id === accountId ? { ...a, status: newStatus } : a))
+        );
+        /* keep modal badge in sync too */
+        setSelectedAccount((prev) => (prev?._id === accountId ? { ...prev, status: newStatus } : prev));
     };
 
     return (
@@ -90,7 +103,7 @@ export default function AccountsTable({ accounts, loading, error }) {
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-white/5">
-                                {accounts.map((acc, idx) => (
+                                {localAccounts.map((acc, idx) => (
                                     <tr
                                         key={acc._id || idx}
                                         className="hover:bg-white/[0.04] transition-colors group cursor-pointer"
@@ -121,10 +134,7 @@ export default function AccountsTable({ accounts, loading, error }) {
                 account={selectedAccount}
                 balance={selectedBalance}
                 onClose={() => setSelectedAccount(null)}
-                onStatusChange={(id, newStatus) => {
-                    // keep selectedAccount in sync so badge updates immediately
-                    setSelectedAccount((prev) => prev ? { ...prev, status: newStatus } : prev);
-                }}
+                onStatusChange={handleStatusChange}
             />
         </div>
     );

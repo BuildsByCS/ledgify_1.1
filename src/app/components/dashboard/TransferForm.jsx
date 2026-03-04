@@ -59,30 +59,45 @@ function ToAccountSelector({ allAccounts, loading, onChange, value, excludeId })
                     ? 'border-indigo-500/50 ring-1 ring-indigo-500/20'
                     : 'border-white/8 hover:border-indigo-500/30'}`}
             >
-                <Search className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-gray-500 flex-shrink-0" />
+                {/* ── search icon (only when open or nothing selected) ── */}
+                {(!selected || open) && (
+                    <Search className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-gray-500 flex-shrink-0" />
+                )}
+
+                {/* ── text input ── */}
                 <input
                     type="text"
                     value={open ? query : ''}
                     onChange={e => { setQuery(e.target.value); setOpen(true); }}
                     onFocus={() => setOpen(true)}
                     placeholder={selected ? '' : 'Search by name or email…'}
-                    className="flex-1 bg-transparent small-text text-gray-300 placeholder:text-gray-600 focus:outline-none min-w-0"
+                    className={`bg-transparent small-text text-gray-300 placeholder:text-gray-600 focus:outline-none min-w-0 ${selected && !open ? 'w-0 p-0' : 'flex-1'}`}
                 />
+
+                {/* ── selected chip (closed state only) ── */}
                 {selected && !open && (
-                    <div className="flex items-center gap-[clamp(0.375rem,1vw,0.5rem)] flex-1 min-w-0">
+                    <div className="flex items-center gap-2 flex-1 min-w-0">
+                        {/* avatar */}
                         <div className="w-[clamp(1.25rem,3vw,1.5rem)] h-[clamp(1.25rem,3vw,1.5rem)] rounded-full bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center flex-shrink-0">
                             <User className="w-[clamp(0.625rem,1.5vw,0.75rem)] h-[clamp(0.625rem,1.5vw,0.75rem)] text-indigo-400" />
                         </div>
+
+                        {/* name + id stacked, shrink to available space */}
                         <div className="min-w-0 flex-1">
-                            <p className="small-text text-gray-200 font-medium truncate leading-tight">{selected.user?.name}</p>
-                            <p className="text-[10px] text-gray-500 font-mono truncate leading-tight">{selected._id}</p>
+                            <div className="flex items-center gap-1.5 flex-wrap">
+                                <p className="small-text text-gray-200 font-medium truncate leading-tight">{selected.user?.name}</p>
+                                <StatusBadge status={selected.status.toLowerCase()} />
+                            </div>
+                            <p className="text-[10px] text-gray-500 font-mono truncate leading-tight mt-0.5">{selected._id}</p>
                         </div>
-                        <StatusBadge status={selected.status} />
-                        <button type="button" onClick={handleClear} className="text-gray-600 hover:text-gray-400 transition-colors flex-shrink-0 ml-1 cursor-pointer">
+
+                        {/* clear */}
+                        <button type="button" onClick={handleClear} className="text-gray-600 hover:text-gray-400 transition-colors flex-shrink-0 cursor-pointer">
                             <X className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
                         </button>
                     </div>
                 )}
+
                 <ChevronDown className={`w-3 h-3 sm:w-3.5 sm:h-3.5 text-gray-600 flex-shrink-0 transition-transform duration-200 ${open ? 'rotate-180' : ''}`} />
             </div>
 
@@ -111,7 +126,7 @@ function ToAccountSelector({ allAccounts, loading, onChange, value, excludeId })
                                     <div className="flex-1 min-w-0">
                                         <div className="flex items-center gap-2 flex-wrap">
                                             <p className="small-text text-gray-200 font-medium leading-tight">{acc.user?.name}</p>
-                                            <StatusBadge status={acc.status} />
+                                            <StatusBadge status={acc.status.toLowerCase()} variant="dot" />
                                         </div>
                                         <p className="text-[10px] text-gray-500 leading-tight mt-0.5">{acc.user?.email}</p>
                                         <p className="text-[10px] font-mono text-gray-600 leading-tight mt-0.5 truncate group-hover:text-indigo-400/60 transition-colors">{acc._id}</p>
@@ -137,12 +152,6 @@ function PreviewPanel({ fromAcc, toAcc, amount, status, currency }) {
 
     return (
         <div className="relative flex flex-col">
-            {/* background decoration */}
-            <div className="absolute inset-0 pointer-events-none">
-                <div className="absolute inset-0 opacity-[0.04]"
-                    style={{ backgroundImage: 'radial-gradient(circle, #6366f1 1px, transparent 1px)', backgroundSize: '28px 28px' }} />
-                <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full bg-indigo-600/10 blur-3xl" />
-            </div>
 
             {/* top label */}
             <div className="relative flex items-center gap-[clamp(0.375rem,1vw,0.5rem)] mb-[clamp(1rem,3vw,2rem)]">
@@ -160,7 +169,7 @@ function PreviewPanel({ fromAcc, toAcc, amount, status, currency }) {
                         <>
                             <p className="small-text font-mono text-indigo-300 truncate">{fromAcc._id}</p>
                             <div className="flex items-center gap-2 mt-[clamp(0.375rem,1vw,0.5rem)]">
-                                <StatusBadge status={fromAcc.status} />
+                                <StatusBadge status={fromAcc.status} variant="icon" />
                                 <span className="text-[10px] text-gray-500">{fromAcc.currency}</span>
                                 {fromAcc.balance != null && (
                                     <span className="text-[10px] text-gray-500 ml-auto">
@@ -202,7 +211,7 @@ function PreviewPanel({ fromAcc, toAcc, amount, status, currency }) {
                                     <User className="w-[clamp(0.625rem,1.5vw,0.75rem)] h-[clamp(0.625rem,1.5vw,0.75rem)] text-indigo-400" />
                                 </div>
                                 <p className="small-text font-medium text-gray-200">{toAcc.user?.name}</p>
-                                <StatusBadge status={toAcc.status} />
+                                <StatusBadge status={toAcc.status} variant="icon" />
                             </div>
                             <p className="text-[10px] text-gray-500">{toAcc.user?.email}</p>
                             <p className="text-[10px] font-mono text-gray-600 mt-0.5 truncate">{toAcc._id}</p>
@@ -292,7 +301,7 @@ export default function TransferForm({
         <div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-0">
 
             {/* ═══ LEFT — Form ═══ */}
-            <div className="flex flex-col z-10 border-r min-h-[clamp(26rem,72vh,38rem)] border-white/5 pr-0 lg:pr-[clamp(1.5rem,4vw,2.5rem)] py-[clamp(0.5rem,1.5vw,1rem)]">
+            <div className="flex flex-col z-10 lg:border-r min-h-[clamp(26rem,72vh,38rem)] border-white/5 pr-0 lg:pr-[clamp(1.5rem,4vw,2.5rem)] py-[clamp(0.5rem,1.5vw,1rem)]">
 
                 {/* header */}
                 <div className="flex items-center gap-[clamp(0.5rem,1.5vw,0.75rem)] mb-[clamp(1rem,3vw,2rem)]">
@@ -300,7 +309,7 @@ export default function TransferForm({
                         <CreditCard className="w-[clamp(0.875rem,2vw,1.25rem)] h-[clamp(0.875rem,2vw,1.25rem)]" />
                     </div>
                     <div>
-                        <h1 className="base-text font-semibold text-white leading-tight">Transfer Funds</h1>
+                        <h1 className="mid-text font-normal text-white leading-tight">Transfer Funds</h1>
                         <p className="small-text text-gray-500 mt-0.5">Send money securely via the Ledgify ledger.</p>
                     </div>
                 </div>

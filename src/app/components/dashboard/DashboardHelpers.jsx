@@ -44,7 +44,7 @@ export function StatusBadge({ status, variant = 'dot' }) {
         };
         const { icon, label, cls } = map[s] ?? map.active;
         return (
-            <span className={`inline-flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-0.5 sm:py-1 rounded-full border small-text font-medium ${cls}`}>
+            <span className={`inline-flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-0.5 sm:py-1 rounded-full border text-[10px] font-medium ${cls}`}>
                 {icon}{label}
             </span>
         );
@@ -53,7 +53,7 @@ export function StatusBadge({ status, variant = 'dot' }) {
     // default "dot" variant
     const active = status?.toUpperCase() === 'ACTIVE';
     return (
-        <span className={`inline-flex items-center gap-1 sm:gap-1.5 text-[10px] font-semibold px-1.5 sm:px-2 py-0.5 rounded-full tracking-wide border ${active
+        <span className={`inline-flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-0.5 sm:py-1 rounded-full border text-[10px] font-medium ${active
             ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/20'
             : 'bg-gray-500/15 text-gray-400 border-gray-500/20'}`}>
             <span className={`w-1 h-1 rounded-full ${active ? 'bg-emerald-400' : 'bg-gray-400'}`} />

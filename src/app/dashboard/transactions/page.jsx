@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import api from '../../components/lib/api';
 import TransferForm from '../../components/dashboard/TransferForm';
+import TransactionHistory from '../../components/dashboard/TransactionHistory';
 
 export default function TransactionsPage() {
     const [isLoading, setIsLoading] = useState(false);
@@ -70,9 +71,9 @@ export default function TransactionsPage() {
     };
 
     return (
-        <div className="w-full py-[clamp(6rem,8vw,10rem)]  sm:px-[clamp(0.875rem,2vw,1.5rem)] animate-in fade-in duration-300">
+        <div className="relative w-full pt-[clamp(6.5rem,8vw,10rem)] sm:px-[clamp(0.875rem,2vw,1.5rem)] animate-in fade-in duration-300">
 
-            <div className="absolute inset-0 bg-black/100 backdrop-blur-sm" />
+            <div className="absolute inset-0 -mx-[clamp(1rem,4vw,2rem)] bg-black/90 backdrop-blur-sm rounded-b-[clamp(2rem,4vw,6rem)]" />
 
             <TransferForm
                 myAccounts={myAccounts}
@@ -85,6 +86,8 @@ export default function TransactionsPage() {
                 onSubmit={handleTransfer}
                 onFromChange={setSelectedFromId}
             />
+
+            <TransactionHistory myAccounts={myAccounts} />
         </div>
     );
 }
