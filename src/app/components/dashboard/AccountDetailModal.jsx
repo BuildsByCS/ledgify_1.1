@@ -2,42 +2,13 @@
 
 import { useEffect, useState, useRef } from 'react';
 import {
-    X, CheckCircle, XCircle, Snowflake, Copy, Check,
-    TrendingUp, TrendingDown, Clock, CreditCard, AlertCircle,
+    X, TrendingUp, TrendingDown, Clock, CreditCard, AlertCircle,
 } from 'lucide-react';
 import api from '../lib/api';
 import { useSelector } from 'react-redux';
+import { CopyButton, StatusBadge } from './DashboardHelpers';
 
-/* helpers */
-
-function StatusBadge({ status }) {
-    const s = status?.toLowerCase() ?? 'active';
-    const map = {
-        active: { icon: <CheckCircle className="w-3 h-3 sm:w-3.5 sm:h-3.5" />, label: 'Active', cls: 'bg-green-500/15 text-green-400 border-green-500/30' },
-        frozen: { icon: <Snowflake className="w-3 h-3 sm:w-3.5 sm:h-3.5" />, label: 'Frozen', cls: 'bg-blue-500/15  text-blue-400  border-blue-500/30' },
-        closed: { icon: <XCircle className="w-3 h-3 sm:w-3.5 sm:h-3.5" />, label: 'Closed', cls: 'bg-red-500/15   text-red-400   border-red-500/30' },
-    };
-    const { icon, label, cls } = map[s] ?? map.active;
-    return (
-        <span className={`inline-flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-0.5 sm:py-1 rounded-full border small-text font-medium ${cls}`}>
-            {icon}{label}
-        </span>
-    );
-}
-
-function CopyButton({ text }) {
-    const [copied, setCopied] = useState(false);
-    const copy = async () => {
-        await navigator.clipboard.writeText(text);
-        setCopied(true);
-        setTimeout(() => setCopied(false), 1800);
-    };
-    return (
-        <button onClick={copy} className="ml-2 text-gray-500 hover:text-indigo-400 transition-colors flex-shrink-0 cursor-pointer" title="Copy">
-            {copied ? <Check className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-green-400" /> : <Copy className="w-3 h-3 sm:w-3.5 sm:h-3.5" />}
-        </button>
-    );
-}
+/* helpers — CopyButton & StatusBadge are imported from DashboardHelpers */
 
 /* status toggle switch */
 function StatusToggle({ currentStatus, accountId, onStatusChange }) {
@@ -244,7 +215,7 @@ export default function AccountDetailModal({ account, balance, onClose, onStatus
                         <div>
                             <div className="flex items-center gap-1.5 sm:gap-2 mt-0.5 flex-wrap">
                                 <p className="base-text text-gray-400 font-medium">Account Details</p>
-                                <StatusBadge status={localStatus} />
+                                <StatusBadge status={localStatus} variant="icon" />
                             </div>
                         </div>
                     </div>
