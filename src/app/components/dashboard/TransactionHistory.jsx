@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import {
     TrendingUp, TrendingDown, History, ChevronDown,
     ArrowRightLeft, Clock, Hash,
+    CheckCircle, XCircle, RotateCcw, RefreshCcw, AlertCircle,
 } from 'lucide-react';
 import api from '../lib/api';
 import { CopyButton } from './DashboardHelpers';
@@ -45,8 +46,12 @@ function TransactionRow({ tx, currency }) {
         ? (tx.transaction?.fromAccount ?? '—')
         : (tx.transaction?.toAccount ?? '—');
 
+    // Extra fields from the nested transaction doc
+    const txType = tx.transaction?.type;
+    const txStatus = tx.transaction?.status;
+
     return (
-        <div className="group flex flex-col gap-3 bg-white/[0.02] hover:bg-white/[0.04] border border-white/5 rounded-xl px-3.5 py-3 sm:px-[clamp(0.75rem,2vw,1.125rem)] sm:py-[clamp(0.75rem,2vw,1.125rem)] transition-colors">
+        <div className="group flex flex-col gap-4 bg-white/[0.02] hover:bg-white/[0.04] border border-white/5 rounded-xl px-3.5 py-3.5 sm:px-[clamp(0.75rem,2vw,1.125rem)] sm:py-[clamp(0.875rem,2vw,1.25rem)] transition-colors">
 
             {/* ── Row 1: icon + type + amount ── */}
             <div className="flex items-center gap-2.5 sm:gap-[clamp(0.5rem,1.5vw,0.75rem)]">
@@ -58,14 +63,43 @@ function TransactionRow({ tx, currency }) {
                     }
                 </div>
 
-                <p className="base-text font-semibold capitalize flex-1" style={{ color: isCredit ? '#4ade80' : '#f87171' }}>
-                    {tx.type?.toLowerCase()}
-                </p>
+                <div className="flex-1 flex flex-col gap-1">
+                    <p className="base-text font-semibold capitalize" style={{ color: isCredit ? '#4ade80' : '#f87171' }}>
+                        {tx.type?.toLowerCase()}
+                    </p>
+                    {/* badges row: type + status icon */}
+                    {(txType || txStatus) && (
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                            {txType && (
+                                <span className="font-mono small-text text-indigo-300/70">
+                                    {txType}
+                                </span>
+                            )}
+                            {txStatus && (() => {
+                                const s = txStatus.toUpperCase();
+                                const statusMap = {
+                                    COMPLETED: { Icon: CheckCircle, color: 'text-green-400', label: 'Completed' },
+                                    FAILED: { Icon: XCircle, color: 'text-red-400', label: 'Failed' },
+                                    REVERSED: { Icon: RotateCcw, color: 'text-orange-400', label: 'Reversed' },
+                                    REFUND: { Icon: RefreshCcw, color: 'text-emerald-400', label: 'Refunded' },
+                                    PENDING: { Icon: AlertCircle, color: 'text-yellow-400', label: 'Pending' },
+                                };
+                                const { Icon, color, label } = statusMap[s] ?? { Icon: AlertCircle, color: 'text-gray-500', label: txStatus };
+                                return (
+                                    <span title={label} className="cursor-default">
+                                        <Icon className={`w-3 h-3 ${color}`} />
+                                    </span>
+                                );
+                            })()}
+                        </div>
+                    )}
+                </div>
 
-                <p className={`font-mono small-text font-bold flex-shrink-0 ${isCredit ? 'text-green-400' : 'text-red-400'}`}>
+                <p className={`font-mono small-text font-bold flex-shrink-0 ${isCredit ? 'text-green-400' : 'text-gray-400'}`}>
                     {isCredit ? '+' : '−'}{currency}{Number(tx.amount).toLocaleString('en-IN')}
                 </p>
             </div>
+
 
             {/* ── Row 2: metadata ── */}
             <div className="flex flex-col gap-2 pl-0 sm:pl-[clamp(2.25rem,5vw,2.75rem)]">
@@ -94,6 +128,8 @@ function TransactionRow({ tx, currency }) {
         </div>
     );
 }
+
+
 
 /* ─────────────────────── TransactionHistory (main export) ─────────────────────── */
 /**
@@ -186,7 +222,7 @@ export default function TransactionHistory({ myAccounts = [] }) {
     const shownCount = transactions.length;
 
     return (
-        <div className="relative z-10 w-full pt-[clamp(4rem,6vw,6rem)] pb-[clamp(3rem,6vw,6rem)]">
+        <div className="relative z-10 w-full ">
 
             {/* ── Section header ── */}
             <div className="flex items-center gap-[clamp(0.5rem,1.5vw,0.75rem)] mb-[clamp(1rem,3vw,1.75rem)]">
@@ -200,10 +236,10 @@ export default function TransactionHistory({ myAccounts = [] }) {
             </div>
 
             {/* ── Card container ── */}
-            <div className="bg-[#0c0f23] border border-white/8 rounded-3xl shadow-[0_0_60px_rgba(99,102,241,0.08)] overflow-hidden">
+            <div className="bg-[#05070e] border border-white/8 rounded-3xl shadow-[0_0_60px_rgba(99,102,241,0.08)] overflow-hidden">
 
                 {/* ── Account picker header ── */}
-                <div className="flex items-end justify-between gap-4 px-[clamp(1rem,3vw,1.75rem)] py-[clamp(0.875rem,2.5vw,1.25rem)] border-b border-white/5 flex-wrap">
+                <div className="flex items-end justify-end gap-4 px-[clamp(1rem,3vw,1.75rem)] py-[clamp(0.875rem,2.5vw,1.25rem)] border-b border-white/5 flex-wrap">
                     <div className="flex-1 min-w-[220px]">
                         <p className="small-text text-gray-500 uppercase tracking-wider font-medium my-[clamp(0.375rem,1vw,0.5rem)]">
                             Select Account
@@ -225,10 +261,10 @@ export default function TransactionHistory({ myAccounts = [] }) {
                     {/* entry count pill */}
                     {pagination && !loading && (
                         <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 flex-shrink-0">
-                            <span className="text-[10px] font-semibold text-indigo-300 tabular-nums">
+                            <span className="small-text font-normal text-indigo-300 tabular-nums">
                                 {shownCount} / {totalEntries}
                             </span>
-                            <span className="text-[10px] text-indigo-400/60">entries</span>
+                            <span className="small-text text-indigo-400/60">entries</span>
                         </div>
                     )}
                 </div>

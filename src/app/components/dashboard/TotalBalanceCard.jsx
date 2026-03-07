@@ -1,5 +1,8 @@
 'use client';
 
+import { useState } from 'react';
+import api from '../lib/api';
+import { Gift } from 'lucide-react';
 
 function WalletIcon() {
     // Wallet body path perimeter ≈ 74 units → trace segment 18, gap 74
@@ -46,8 +49,32 @@ const PARTICLES = [
  *   totalBalance      {number}
  *   selectedAccount   {string}
  *   accountBalance    {number|null}
+ *   onRefresh         {function}
  */
-export default function TotalBalanceCard({ totalBalance, selectedAccount, accountBalance }) {
+export default function TotalBalanceCard({ totalBalance, selectedAccount, accountBalance, onRefresh }) {
+    const [loading, setLoading] = useState(false);
+    const [status, setStatus] = useState(null);
+
+    const handleGetBonus = async (e) => {
+        e.stopPropagation();
+        if (!selectedAccount || loading) return;
+        setLoading(true);
+        setStatus(null);
+        try {
+            await api.post('/api/transactions/get-bonus', {
+                toAccount: selectedAccount,
+                idempotencyKey: crypto.randomUUID(),
+            });
+            setStatus({ type: 'success', message: 'Bonus added successfully' });
+            if (onRefresh) onRefresh();
+        } catch (err) {
+            setStatus({ type: 'error', message: err.response?.data?.message || err.response?.data?.error || 'Failed to add bonus' });
+        } finally {
+            setLoading(false);
+            setTimeout(() => setStatus(null), 4000);
+        }
+    };
+
     return (
         // row-start-2 sm:row-start-1
         <div className=" bg-[#05070e] p-[clamp(0.875rem,2vw,1.5rem)] rounded-3xl border border-white/10 relative overflow-hidden group hover:border-indigo-500/50 transition-all shadow-2xl cursor-pointer">
@@ -71,16 +98,38 @@ export default function TotalBalanceCard({ totalBalance, selectedAccount, accoun
 
             {/* selected account balance */}
             {selectedAccount && accountBalance !== null && (
-                <div className="mt-2 pt-3 border-t border-white/5 relative z-10">
-                    <p className="small-text text-gray-500 font-medium">
-                        Selected Account Balance
-                    </p>
-                    <p className="mid-text font-medium font-bold text-indigo-300 font-mono">
-                        ₹{accountBalance.toFixed(2)}
-                    </p>
-                    <p className="small-text text-gray-600 font-mono">
-                        ...{selectedAccount.slice(-6)}
-                    </p>
+                <div className="mt-2 pt-3 border-t border-white/5 relative z-10 flex items-center justify-between gap-[clamp(0.5rem,1vw,0.75rem)] w-full">
+                    <div>
+                        <p className="small-text text-gray-500 font-medium">
+                            Selected Account Balance
+                        </p>
+                        <p className="mid-text font-medium font-bold text-indigo-300 font-mono">
+                            ₹{accountBalance.toFixed(2)}
+                        </p>
+                        <p className="small-text text-gray-600 font-mono">
+                            ...{selectedAccount.slice(-6)}
+                        </p>
+                    </div>
+
+                    <div className="flex flex-col gap-1 items-end">
+                        <button
+                            onClick={handleGetBonus}
+                            disabled={loading}
+                            className="flex items-center gap-[clamp(0.375rem,1vw,0.5rem)] px-[clamp(0.75rem,2vw,1rem)] py-[clamp(0.375rem,1vw,0.5rem)] bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-400 border border-indigo-500/20 rounded-lg small-text font-medium transition-colors disabled:opacity-50 flex-shrink-0 cursor-pointer"
+                        >
+                            {loading ? (
+                                <div className="w-[clamp(0.875rem,2vw,1rem)] h-[clamp(0.875rem,2vw,1rem)] border border-indigo-400/30 border-t-indigo-400 rounded-full animate-spin" />
+                            ) : (
+                                <Gift className="w-[clamp(0.875rem,2vw,1rem)] h-[clamp(0.875rem,2vw,1rem)]" />
+                            )}
+                            Get Bonus
+                        </button>
+                        {status && (
+                            <p className={`text-[10px] text-right ${status.type === 'success' ? 'text-green-400' : 'text-red-400'}`}>
+                                {status.message}
+                            </p>
+                        )}
+                    </div>
                 </div>
             )}
 

@@ -133,72 +133,99 @@ export default function CashFlowChart({
                 </div>
             </div>
 
-            {/* chart area */}
-            <div className="w-full h-[clamp(200px,35vw,420px)] mt-4 relative">
+            {/* chart area wrapper for fixed Y axis + horizontal scroll */}
+            <div className="w-full mt-4 relative flex">
                 {chartLoading && (
-                    <div className="absolute inset-0 flex items-center justify-center bg-[#05070e]/70 backdrop-blur-sm z-10 rounded-2xl">
+                    <div className="absolute inset-0 flex items-center justify-center bg-[#05070e]/70 backdrop-blur-sm z-30 rounded-2xl">
                         <div className="w-8 h-8 border-t-2 border-indigo-500 rounded-full animate-spin" />
                     </div>
                 )}
 
-                {mounted && !chartLoading && chartData.length > 0 ? (
-                    <ResponsiveContainer width="100%" height="100%" >
-                        <ComposedChart data={chartData} margin={{ top: 20, right: 20, left: 0, bottom: 10 }}>
-                            <defs>
-                                <linearGradient id="balanceGrad" x1="0" y1="0" x2="0" y2="1">
-                                    <stop offset="5%" stopColor="#818cf8" stopOpacity={0.15} />
-                                    <stop offset="95%" stopColor="#818cf8" stopOpacity={0.0} />
-                                </linearGradient>
-                            </defs>
-
-                            <CartesianGrid strokeDasharray="4 4" stroke="rgba(255,255,255,0.05)" vertical={false} />
-
-                            <XAxis
-                                dataKey="index"
-                                type="number"
-                                domain={[0, chartData.length - 1]}
-                                tickCount={Math.min(chartData.length, 8)}
-                                stroke="rgba(255,255,255,0.0)"
-                                tick={{ fill: 'rgba(255,255,255,0.35)', fontSize: 10, fontFamily: 'monospace' }}
-                                tickLine={false}
-                                axisLine={false}
-                                dy={10}
-                                tickFormatter={(idx) => chartData[idx]?.label ?? ''}
-                            />
-
-                            <YAxis
-                                stroke="rgba(255,255,255,0.0)"
-                                tick={{ fill: 'rgba(255,255,255,0.35)', fontSize: 10, fontFamily: 'monospace' }}
-                                tickLine={false}
-                                axisLine={false}
-                                tickFormatter={(v) => `₹${v.toLocaleString()}`}
-                                width={50}
-                            />
-
-                            <Tooltip
-                                content={<CustomTooltip />}
-                                cursor={{ stroke: 'rgba(255,255,255,0.08)', strokeWidth: 1, strokeDasharray: '4 4' }}
-                            />
-
-                            <Line
-                                type="monotone"
-                                dataKey="balance"
-                                stroke="#818cf8"
-                                strokeWidth={2.5}
-                                dot={<CustomDot />}
-                                activeDot={<CustomActiveDot />}
-                                animationDuration={900}
-                                animationEasing="ease-out"
-                                isAnimationActive={true}
-                            />
-                        </ComposedChart>
-                    </ResponsiveContainer>
-                ) : !chartLoading ? (
-                    <div className="absolute inset-0 flex flex-col items-center justify-center text-gray-500">
-                        <TrendingUp className="w-12 h-12 mb-3 opacity-20" />
-                        <p>No transaction history for this account.</p>
+                {/* Fixed Y-Axis Overlay */}
+                {mounted && !chartLoading && chartData.length > 0 && (
+                    <div className="absolute left-0 top-0 h-[clamp(200px,35vw,420px)] w-[60px] z-20 bg-[#05070e] pointer-events-none pb-2 flex flex-col justify-start">
+                        <ResponsiveContainer width="100%" height="100%">
+                            <ComposedChart data={chartData} margin={{ top: 20, right: 0, left: 0, bottom: 10 }}>
+                                <YAxis
+                                    domain={['auto', 'auto']}
+                                    stroke="rgba(255,255,255,0.0)"
+                                    tick={{ fill: 'rgba(255,255,255,0.35)', fontSize: 10, fontFamily: 'monospace' }}
+                                    tickLine={false}
+                                    axisLine={false}
+                                    tickFormatter={(v) => `₹${v.toLocaleString()}`}
+                                    width={60}
+                                />
+                                <Line dataKey="balance" stroke="none" activeDot={false} dot={false} isAnimationActive={false} />
+                            </ComposedChart>
+                        </ResponsiveContainer>
+                        {/* Gradient separator mask to hide scrolling content sharply */}
+                        <div className="absolute right-0 top-0 bottom-0 w-4 translate-x-full bg-gradient-to-r from-[#05070e] to-transparent pointer-events-none" />
                     </div>
-                ) : null}
+                )}
+
+                {/* Scrollable Chart */}
+                <div className="flex-1 overflow-x-auto">
+                    <div className="h-[clamp(200px,35vw,420px)] min-w-[700px] w-full relative pb-2 pr-[2px]">
+                        {mounted && !chartLoading && chartData.length > 0 ? (
+                            <ResponsiveContainer width="100%" height="100%" >
+                                <ComposedChart data={chartData} margin={{ top: 20, right: 20, left: 0, bottom: 10 }}>
+                                    <defs>
+                                        <linearGradient id="balanceGrad" x1="0" y1="0" x2="0" y2="1">
+                                            <stop offset="5%" stopColor="#818cf8" stopOpacity={0.15} />
+                                            <stop offset="95%" stopColor="#818cf8" stopOpacity={0.0} />
+                                        </linearGradient>
+                                    </defs>
+
+                                    <CartesianGrid strokeDasharray="4 4" stroke="rgba(255,255,255,0.05)" vertical={false} />
+
+                                    <XAxis
+                                        dataKey="index"
+                                        type="number"
+                                        domain={[0, chartData.length - 1]}
+                                        tickCount={Math.min(chartData.length, 8)}
+                                        stroke="rgba(255,255,255,0.0)"
+                                        tick={{ fill: 'rgba(255,255,255,0.35)', fontSize: 10, fontFamily: 'monospace' }}
+                                        tickLine={false}
+                                        axisLine={false}
+                                        dy={10}
+                                        tickFormatter={(idx) => chartData[idx]?.label ?? ''}
+                                    />
+
+                                    <YAxis
+                                        domain={['auto', 'auto']}
+                                        stroke="rgba(255,255,255,0.0)"
+                                        tickLine={false}
+                                        axisLine={false}
+                                        tick={false}
+                                        width={60}
+                                    />
+
+                                    <Tooltip
+                                        content={<CustomTooltip />}
+                                        cursor={{ stroke: 'rgba(255,255,255,0.08)', strokeWidth: 1, strokeDasharray: '4 4' }}
+                                    />
+
+                                    <Line
+                                        type="monotone"
+                                        dataKey="balance"
+                                        stroke="#818cf8"
+                                        strokeWidth={2.5}
+                                        dot={<CustomDot />}
+                                        activeDot={<CustomActiveDot />}
+                                        animationDuration={900}
+                                        animationEasing="ease-out"
+                                        isAnimationActive={true}
+                                    />
+                                </ComposedChart>
+                            </ResponsiveContainer>
+                        ) : !chartLoading ? (
+                            <div className="absolute inset-0 flex flex-col items-center justify-center text-gray-500">
+                                <TrendingUp className="w-12 h-12 mb-3 opacity-20" />
+                                <p>No transaction history for this account.</p>
+                            </div>
+                        ) : null}
+                    </div>
+                </div>
             </div>
         </div>
     );

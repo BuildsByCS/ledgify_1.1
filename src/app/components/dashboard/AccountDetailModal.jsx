@@ -21,7 +21,10 @@ function StatusToggle({ currentStatus, accountId, onStatusChange }) {
         setLoading(true);
         setFeedback(null);
         try {
-            const statusChanged = await api.post(`/api/accounts/update-status?accountId=${accountId}&status=${newStatus}`);
+            const statusChanged = await api.post('/api/accounts/update-status', {
+                accountId,
+                status: newStatus
+            });
             console.log(statusChanged);
             onStatusChange(newStatus);
             setFeedback('ok');
@@ -304,7 +307,7 @@ export default function AccountDetailModal({ account, balance, onClose, onStatus
                     <div>
                         <div className="flex items-center justify-between mb-[clamp(0.5rem,1.5vw,0.75rem)]">
                             <p className="small-text text-gray-500 uppercase tracking-wider font-medium">
-                                Transactions
+                                Ledger
                             </p>
                             {!txLoading && transactions.length > 0 && (
                                 <p className="text-gray-600 small-text">

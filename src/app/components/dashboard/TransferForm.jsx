@@ -3,9 +3,9 @@
 import { useState, useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import {
-    Send, CheckCircle, AlertCircle, ArrowDown, CreditCard,
+    CheckCircle, AlertCircle, ArrowDown, CreditCard,
     Search, User, ChevronDown, X,
-    ArrowRight, Sparkles, ShieldCheck, Zap,
+    ArrowRight, ShieldCheck, Zap,
 } from 'lucide-react';
 import { CopyButton, StatusBadge } from './DashboardHelpers';
 
@@ -90,15 +90,23 @@ function ToAccountSelector({ allAccounts, loading, onChange, value, excludeId })
                             </div>
                             <p className="text-[10px] text-gray-500 font-mono truncate leading-tight mt-0.5">{selected._id}</p>
                         </div>
-
-                        {/* clear */}
-                        <button type="button" onClick={handleClear} className="text-gray-600 hover:text-gray-400 transition-colors flex-shrink-0 cursor-pointer">
-                            <X className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
-                        </button>
                     </div>
                 )}
 
-                <ChevronDown className={`w-3 h-3 sm:w-3.5 sm:h-3.5 text-gray-600 flex-shrink-0 transition-transform duration-200 ${open ? 'rotate-180' : ''}`} />
+                {/* ── Right-side actions: clear, copy, dropdown ── */}
+                <div className="flex items-center gap-1.5 flex-shrink-0">
+                    {selected && !open && (
+                        <>
+                            <div onClick={(e) => { e.stopPropagation(); }} className="flex">
+                                <CopyButton text={selected._id} />
+                            </div>
+                            <button type="button" onClick={handleClear} className="p-1 text-gray-600 hover:text-gray-400 transition-colors cursor-pointer rounded-md hover:bg-white/5">
+                                <X className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+                            </button>
+                        </>
+                    )}
+                    <ChevronDown className={`w-3 h-3 sm:w-3.5 sm:h-3.5 text-gray-600 transition-transform duration-200 ${open ? 'rotate-180' : ''}`} />
+                </div>
             </div>
 
             {open && (
@@ -155,7 +163,6 @@ function PreviewPanel({ fromAcc, toAcc, amount, status, currency }) {
 
             {/* top label */}
             <div className="relative flex items-center gap-[clamp(0.375rem,1vw,0.5rem)] mb-[clamp(1rem,3vw,2rem)]">
-                <Sparkles className="w-[clamp(0.875rem,2vw,1rem)] h-[clamp(0.875rem,2vw,1rem)] text-indigo-400" />
                 <span className="small-text text-indigo-300 font-medium uppercase tracking-widest">Transfer Preview</span>
             </div>
 
@@ -336,42 +343,48 @@ export default function TransferForm({
                     {/* From Account */}
                     <div>
                         <FieldLabel>From Account (sender)</FieldLabel>
-                        {myAccounts.length > 0 ? (
-                            <select
-                                style={{ background: 'rgba(99,102,241,0.05)' }}
-                                className="w-full font-mono small-text text-indigo-300 border border-white/8 rounded-xl px-[clamp(0.625rem,2vw,1rem)] py-[clamp(0.375rem,1vw,0.625rem)] focus:outline-none focus:ring-1 focus:ring-indigo-500/40 transition-all appearance-none cursor-pointer hover:border-indigo-500/30"
-                                {...register('from', { required: 'Please select an account' })}>
-                                <option value="" className="bg-[#0c0f23] text-gray-400">Select your account…</option>
-                                {myAccounts.map(acc => (
-                                    <option key={acc._id} value={acc._id} className="bg-[#0c0f23] text-indigo-300">
-                                        {acc._id} - ({acc.status})
-                                    </option>
-                                ))}
-                            </select>
-                        ) : (
-                            <input type="text" placeholder="Enter source account ID"
-                                className="w-full font-mono small-text text-indigo-300 bg-indigo-500/5 border border-white/8 rounded-xl px-[clamp(0.625rem,2vw,1rem)] py-[clamp(0.375rem,1vw,0.625rem)] focus:outline-none focus:ring-1 focus:ring-indigo-500/40 transition-all placeholder:text-gray-600"
-                                {...register('from', { required: 'Sender Account ID is required' })} />
-                        )}
+                        <div className="relative">
+                            {myAccounts.length > 0 ? (
+                                <select
+                                    style={{ background: 'rgba(99,102,241,0.05)' }}
+                                    className="w-full font-mono small-text text-indigo-300 border border-white/8 rounded-xl px-[clamp(0.625rem,2vw,1rem)] py-[clamp(0.375rem,1vw,0.625rem)] focus:outline-none focus:ring-1 focus:ring-indigo-500/40 transition-all appearance-none cursor-pointer hover:border-indigo-500/30 pr-10"
+                                    {...register('from', { required: 'Please select an account' })}>
+                                    <option value="" className="bg-[#0c0f23] text-gray-400">Select your account…</option>
+                                    {myAccounts.map(acc => (
+                                        <option key={acc._id} value={acc._id} className="bg-[#0c0f23] text-indigo-300">
+                                            {acc._id} - ({acc.status})
+                                        </option>
+                                    ))}
+                                </select>
+                            ) : (
+                                <input type="text" placeholder="Enter source account ID"
+                                    className="w-full font-mono small-text text-indigo-300 bg-indigo-500/5 border border-white/8 rounded-xl px-[clamp(0.625rem,2vw,1rem)] py-[clamp(0.375rem,1vw,0.625rem)] focus:outline-none focus:ring-1 focus:ring-indigo-500/40 transition-all placeholder:text-gray-600 pr-10"
+                                    {...register('from', { required: 'Sender Account ID is required' })} />
+                            )}
+
+                            {/* Inline copy button */}
+                            {selectedFromId && (
+                                <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                                    <CopyButton text={selectedFromId} />
+                                </div>
+                            )}
+                        </div>
                         {errors.from && <p className="small-text text-red-400 mt-1">{errors.from.message}</p>}
+
                         {selectedFromId && (
-                            <div className="flex items-center font-mono small-text text-indigo-300 bg-indigo-500/5 border border-white/5 rounded-xl px-[clamp(0.625rem,2vw,1rem)] py-[clamp(0.375rem,1vw,0.5rem)] mt-[clamp(0.375rem,1vw,0.5rem)] break-all">
-                                <span className="flex-1 truncate">{selectedFromId}</span>
-                                <CopyButton text={selectedFromId} />
-                            </div>
-                        )}
-                        {selectedFromId && (
-                            <div className="flex items-center gap-2 mt-[clamp(0.375rem,1vw,0.5rem)] px-1">
-                                <span className="small-text text-gray-500">Live Balance:</span>
-                                {balanceLoading ? (
-                                    <div className="w-3 h-3 border border-gray-600 border-t-indigo-400 rounded-full animate-spin" />
-                                ) : fromBalance !== null ? (
-                                    <span className="small-text font-semibold font-mono text-emerald-400">
-                                        {fromAcc?.currency === 'INR' ? '₹' : '$'}{Number(fromBalance).toLocaleString('en-IN')}
-                                    </span>
-                                ) : (
-                                    <span className="small-text text-gray-600 italic">unavailable</span>
-                                )}
+                            <div className="flex items-center justify-between mt-[clamp(0.375rem,1vw,0.5rem)] px-1">
+                                <div className="flex items-center gap-2">
+                                    <span className="small-text text-gray-500">Live Balance:</span>
+                                    {balanceLoading ? (
+                                        <div className="w-3 h-3 border border-gray-600 border-t-indigo-400 rounded-full animate-spin" />
+                                    ) : fromBalance !== null ? (
+                                        <span className="small-text font-semibold font-mono text-emerald-400">
+                                            {fromAcc?.currency === 'INR' ? '₹' : '$'}{Number(fromBalance).toLocaleString('en-IN')}
+                                        </span>
+                                    ) : (
+                                        <span className="small-text text-gray-600 italic">unavailable</span>
+                                    )}
+                                </div>
                             </div>
                         )}
                     </div>
@@ -397,26 +410,20 @@ export default function TransferForm({
                             onChange={(id) => { setValue('to', id, { shouldValidate: true }); onToChange?.(id); }}
                         />
                         {errors.to && <p className="small-text text-red-400 mt-1">{errors.to.message}</p>}
-                        {selectedToId && (
-                            <div className="flex items-center font-mono small-text text-indigo-300 bg-indigo-500/5 border border-white/5 rounded-xl px-[clamp(0.625rem,2vw,1rem)] py-[clamp(0.375rem,1vw,0.5rem)] mt-[clamp(0.375rem,1vw,0.5rem)] break-all">
-                                <span className="flex-1 truncate">{selectedToId}</span>
-                                <CopyButton text={selectedToId} />
-                            </div>
-                        )}
                     </div>
 
                     {/* Amount */}
                     <div>
                         <FieldLabel>Amount</FieldLabel>
-                        <div className="grid grid-cols-2 gap-[clamp(0.5rem,1.5vw,0.75rem)]">
-                            <div className="bg-[#0d1029] border border-white/8 rounded-2xl p-[clamp(0.625rem,2vw,1rem)]">
+                        <div className="grid grid-cols-3 gap-[clamp(0.5rem,1.5vw,0.75rem)]">
+                            <div className="col-span-2 bg-[#0d1029] border border-white/8 rounded-2xl p-[clamp(0.625rem,2vw,1rem)]">
                                 <p className="small-text text-gray-500 font-medium mb-[clamp(0.25rem,0.75vw,0.375rem)]">Enter value</p>
                                 <input
                                     type="number"
                                     step="1"
                                     min="1"
                                     placeholder="0"
-                                    className="w-full bg-transparent mid-text font-bold text-white font-mono focus:outline-none placeholder:text-gray-700"
+                                    className="w-full bg-transparent mid-text font-bold text-white font-mono focus:outline-none placeholder:text-gray-700 px-[clamp(0.625rem,2vw,1rem)]"
                                     onKeyDown={(e) => ['.', ',', 'e', 'E', '+', '-'].includes(e.key) && e.preventDefault()}
                                     {...register('amount', {
                                         required: 'Amount is required',
@@ -425,9 +432,9 @@ export default function TransferForm({
                                     })}
                                 />
                             </div>
-                            <div className="bg-[#0d1029] border border-white/8 rounded-2xl p-[clamp(0.625rem,2vw,1rem)]">
+                            <div className="p-[clamp(0.625rem,2vw,1rem)] flex flex-col justify-center">
                                 <p className="small-text text-gray-500 font-medium mb-[clamp(0.25rem,0.75vw,0.375rem)]">Currency</p>
-                                <p className="mid-text font-bold text-white">{currency}</p>
+                                <p className="base-text font-bold text-white">{currency}</p>
                             </div>
                         </div>
                         {errors.amount && <p className="small-text text-red-400 mt-1">{errors.amount.message}</p>}
@@ -439,18 +446,17 @@ export default function TransferForm({
                     <button
                         type="submit"
                         disabled={isLoading}
-                        className="w-full py-[clamp(0.625rem,2vw,0.875rem)] rounded-2xl bg-indigo-600/80 hover:bg-indigo-600 border border-indigo-500/30 text-white small-text font-medium transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex justify-center items-center gap-[clamp(0.375rem,1vw,0.5rem)] shadow-[0_0_24px_rgba(99,102,241,0.25)] hover:shadow-[0_0_36px_rgba(99,102,241,0.4)]"
+                        className="w-full base-text font-medium leading-none flex items-center justify-center gap-2.5 bg-indigo-600/20 hover:bg-indigo-500/40 text-indigo-400 hover:text-white py-4 rounded-xl transition-all border border-indigo-500/30 hover:border-indigo-400 hover:shadow-[0_0_20px_rgba(79,70,229,0.4)] disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                     >
                         {isLoading ? (
                             <>
-                                <div className="w-3 h-3 sm:w-3.5 sm:h-3.5 border border-white/30 border-t-white rounded-full animate-spin" />
-                                Processing Ledger…
+                                <div className="w-3 h-3 sm:w-3.5 sm:h-3.5 border border-indigo-400/30 border-t-indigo-300 rounded-full animate-spin" />
+                                Processing Transaction...
                             </>
                         ) : (
                             <>
-                                <Send className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
                                 Execute Transfer
-                                <ArrowRight className="w-3 h-3 sm:w-3.5 sm:h-3.5 opacity-60" />
+                                <ArrowRight className="w-3.5 h-3.5  sm:w-5 sm:h-5 opacity-60" />
                             </>
                         )}
                     </button>

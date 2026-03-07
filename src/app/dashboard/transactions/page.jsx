@@ -1,6 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
+import { ArrowLeft } from 'lucide-react';
 import api from '../../components/lib/api';
 import TransferForm from '../../components/dashboard/TransferForm';
 import TransactionHistory from '../../components/dashboard/TransactionHistory';
@@ -71,9 +73,20 @@ export default function TransactionsPage() {
     };
 
     return (
-        <div className="relative w-full pt-[clamp(6.5rem,8vw,10rem)] sm:px-[clamp(0.875rem,2vw,1.5rem)] animate-in fade-in duration-300">
+        <div className="relative w-full bg-black/90 backdrop-blur-sm rounded-[clamp(2rem,4vw,6rem)] space-y-[clamp(4rem,6vw,6rem)] mt-[clamp(8rem,8vw,10rem)] px-[clamp(0.875rem,3vw,2.5rem)] py-[clamp(1.5rem,3vw,4rem)] animate-in fade-in duration-300">
 
-            <div className="absolute inset-0 -mx-[clamp(1rem,4vw,2rem)] bg-black/90 backdrop-blur-sm rounded-b-[clamp(2rem,4vw,6rem)]" />
+            {/* <div className="absolute inset-0 -mx-[clamp(1rem,4vw,2rem)] bg-black/90 backdrop-blur-sm rounded-b-[clamp(2rem,4vw,6rem)]" /> */}
+
+            {/* Go Back Button */}
+            <div className="absolute -top-[clamp(2.5rem,4vw,3rem)]  left-0 sm:left-[clamp(0.875rem,2vw,1.5rem)] z-20">
+                <Link
+                    href="/dashboard"
+                    className="group flex items-center gap-[0.375rem] px-3 py-1.5 rounded-full bg-[#05070e] hover:bg-[#05070e]/90 text-gray-400 hover:text-white transition-all border border-white/5 hover:border-white/10 small-text font-medium"
+                >
+                    <ArrowLeft className="w-3.5 h-3.5 transition-transform group-hover:-translate-x-0.5" />
+                    Go Back
+                </Link>
+            </div>
 
             <TransferForm
                 myAccounts={myAccounts}

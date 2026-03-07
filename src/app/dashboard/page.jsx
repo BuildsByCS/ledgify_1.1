@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import api from '../components/lib/api';
 import '../components/dashboard/dashboard.css';
@@ -10,6 +10,7 @@ import ActiveAccountsCard from '../components/dashboard/ActiveAccountsCard';
 import PayTransferCard from '../components/dashboard/PayTransferCard';
 import CashFlowChart from '../components/dashboard/CashFlowChart';
 import AccountsTable from '../components/dashboard/AccountsTable';
+import TransactionHistory from '../components/dashboard/TransactionHistory';
 
 export default function DashboardOverview() {
     const { user } = useSelector((state) => state.auth);
@@ -23,6 +24,10 @@ export default function DashboardOverview() {
     const [loading, setLoading] = useState(true);
     const [chartLoading, setChartLoading] = useState(false);
     const [error, setError] = useState(null);
+    const [refreshCount, setRefreshCount] = useState(0);
+    const prevAccountRef = useRef('');
+
+    const handleRefresh = () => setRefreshCount(r => r + 1);
 
     // mark mounted so ResponsiveContainer can measure the DOM
     useEffect(() => { setMounted(true); }, []);
@@ -38,7 +43,9 @@ export default function DashboardOverview() {
                 const loadedAccounts = accountsRes.data?.accounts || accountsRes.data || [];
                 setAccounts(loadedAccounts);
                 setTotalBalance(totalRes.data?.totalBalance ?? 0);
-                if (loadedAccounts.length > 0) setSelectedAccount(loadedAccounts[0]._id);
+                if (loadedAccounts.length > 0) {
+                    setSelectedAccount(prev => prev || loadedAccounts[0]._id);
+                }
             } catch (err) {
                 console.error(err);
                 setError('Failed to load accounts. Are you logged in?');
@@ -47,14 +54,20 @@ export default function DashboardOverview() {
             }
         };
         fetchInitialData();
-    }, []);
+    }, [refreshCount]);
 
     // when selected account changes: fetch its balance & chart data
     useEffect(() => {
         const fetchAccountData = async () => {
             if (!selectedAccount) return;
             setChartLoading(true);
-            setAccountBalance(null);
+
+            // only clear out the existing balance if we are actively switching to a DIFFERENT account
+            // this prevents the UI from "flashing" to empty when merely refreshing data (e.g. after get-bonus)
+            if (prevAccountRef.current !== selectedAccount) {
+                setAccountBalance(null);
+                prevAccountRef.current = selectedAccount;
+            }
             try {
                 const [balanceRes, chartRes] = await Promise.all([
                     api.get(`/api/accounts/balance/${selectedAccount}`),
@@ -89,7 +102,7 @@ export default function DashboardOverview() {
             }
         };
         fetchAccountData();
-    }, [selectedAccount]);
+    }, [selectedAccount, refreshCount]);
 
     const activeCount = accounts.filter(
         (a) => !a.status || a.status.toUpperCase() === 'ACTIVE'
@@ -114,31 +127,37 @@ export default function DashboardOverview() {
                     totalBalance={totalBalance}
                     selectedAccount={selectedAccount}
                     accountBalance={accountBalance}
+                    onRefresh={handleRefresh}
                 />
                 <ActiveAccountsCard activeCount={activeCount} />
                 <PayTransferCard />
             </div>
 
             <div className='grid grid-cols-1 2xl:grid-cols-2 gap-[clamp(0.75rem,2vw,1.5rem)]'>
-            {/* cash flow chart */}
-            {!loading && !error && accounts.length > 0 && (
-                <CashFlowChart
-                    chartData={chartData}
-                    chartLoading={chartLoading}
-                    mounted={mounted}
-                    selectedAccount={selectedAccount}
-                    accounts={accounts}
-                    onAccountChange={setSelectedAccount}
+                {/* cash flow chart */}
+                {!loading && !error && accounts.length > 0 && (
+                    <CashFlowChart
+                        chartData={chartData}
+                        chartLoading={chartLoading}
+                        mounted={mounted}
+                        selectedAccount={selectedAccount}
+                        accounts={accounts}
+                        onAccountChange={setSelectedAccount}
                     />
                 )}
 
-            {/* accounts table */}
-            <AccountsTable
-                accounts={accounts}
-                loading={loading}
-                error={error}
+                {/* accounts table */}
+                <AccountsTable
+                    accounts={accounts}
+                    loading={loading}
+                    error={error}
                 />
+            {/* transaction history */}
+                <div className="p-[clamp(0.875rem,2vw,1.5rem)] rounded-3xl bg-[#05070e] border border-white/10 overflow-hidden ">
+                <TransactionHistory myAccounts={accounts} />
             </div>
+            </div>
+
         </div>
     );
 }
