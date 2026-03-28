@@ -98,7 +98,7 @@ export default function AuthPage() {
         <>
             <div
                 ref={cardRef}
-                className="glass-card w-full max-w-[90vw] sm:max-w-[400px] px-5 py-6 sm:px-7 sm:pt-[26px] sm:pb-[30px] relative z-10 bg-[#06091a]"
+                className="glass-card w-full w-[100%] max-w-[400px] px-5 py-6 sm:px-7 sm:pt-[26px] sm:pb-[30px] relative z-10 bg-[#06091a]"
             >
                 {/* Header */}
                 <div className="mb-4 sm:mb-5 text-center">

@@ -5,12 +5,12 @@ import TextReveal from './utils/TextReveal';
 
 export default function Footer() {
     return (
-        <div className="relative z-5 w-[100vw] p-[5%]">
+        <div className="relative z-5 p-[clamp(1rem,calc(0.8rem+3vw),4rem)]">
             <div className="flex justify-between items-end">
                 <div>
                     <CenterLetterStagger
                         as="p"
-                        className="text-[17vw] xs:text-[12vw] sm:text-[12vw] lg:text-[12vw] font-thin w-fit"
+                        className="landing-hero-text font-thin w-fit"
                         start="top bottom"
                         toggleActions="play none none reset"
                     >
@@ -21,7 +21,7 @@ export default function Footer() {
                     <TextReveal
                         as="p"
                         mode="letters"
-                        className="text-[3vw] xs:text-[2.5vw] sm:text-[2vw] md:text-[1.5vw] lg:text-[1.2vw] leading-none"
+                        className="small-text leading-none"
                         start="top bottom"
                         delay={0.1}
                         yOffset={0}
@@ -35,7 +35,7 @@ export default function Footer() {
                 <TextReveal
                     as="p"
                     mode="letters"
-                    className="text-[3vw] xs:text-[2.5vw] sm:text-[2vw] md:text-[1.5vw] lg:text-[1vw] leading-none"
+                    className="small-text leading-none"
                     start="top bottom"
                     stagger={0.06}
                     delay={0.15}

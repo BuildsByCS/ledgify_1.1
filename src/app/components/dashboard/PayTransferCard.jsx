@@ -79,7 +79,7 @@ function Recipient() {
 
 export default function PayTransferCard() {
     return (
-        <div className="row-start-1 sm:col-span-2 lg:col-span-1 lg:col-start-3 bg-[#05070e] p-[clamp(0.875rem,2vw,1.5rem)] rounded-3xl border border-white/10 relative overflow-hidden group hover:border-blue-500/50 transition-all flex flex-col justify-center shadow-2xl cursor-pointer">
+        <div className="row-start-1 sm:col-span-2 lg:col-span-1 lg:col-start-3 bg-[#05070e] p-[clamp(0.875rem,2vw,1.5rem)] rounded-3xl border border-white/10 relative overflow-hidden group hover:border-blue-500/50 transition-all flex flex-col justify-center shadow-2xl">
             {/* glow */}
             <div className="absolute top-0 right-0 w-[clamp(5rem,12vw,8rem)] h-[clamp(5rem,12vw,8rem)] bg-blue-500/10 rounded-full blur-3xl -mr-10 -mt-10 transition-all group-hover:bg-blue-500/20" />
 

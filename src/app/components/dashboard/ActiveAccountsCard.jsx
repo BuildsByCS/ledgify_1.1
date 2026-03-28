@@ -69,7 +69,7 @@ const CURRENCY_SYMBOLS = [
  */
 export default function ActiveAccountsCard({ activeCount }) {
     return (
-        <div className="bg-[#05070e] p-[clamp(0.875rem,2vw,1.5rem)] rounded-3xl border border-white/10 relative overflow-hidden group hover:border-green-500/50 transition-all shadow-2xl cursor-pointer">
+        <div className="bg-[#05070e] p-[clamp(0.875rem,2vw,1.5rem)] rounded-3xl border border-white/10 relative overflow-hidden group hover:border-green-500/50 transition-all shadow-2xl">
 
             {/* ghost trending-chart */}
             <svg

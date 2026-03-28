@@ -1,0 +1,130 @@
+
+.card-page-container {
+    width: 100%;
+}
+
+.cards{
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    justify-items: center;
+    align-items: center;
+    gap: 25px;
+    padding: clamp(5rem, 5vw, 7rem) 0 ;
+}
+
+@media (min-width: 480px) and (max-width: 768px) {
+    .cards {
+        grid-template-columns: repeat(2, 1fr);
+
+    }
+    .card:nth-child(odd){
+        justify-self: end;
+        align-self: end;
+    }
+    .card:nth-child(even){
+        justify-self: start;
+        align-self: end;
+    }
+    .card:nth-child(3){
+        grid-column:span 2;
+        justify-self: center;
+        align-self: start;
+    }
+}
+
+@media (min-width: 769px) {
+
+    .cards{
+        display: block;
+        height: clamp(500px, 100vh, 850px);
+    }
+
+    .card{
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+    }
+}
+
+.cards img{
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+}
+
+.card{
+    width: clamp(12rem, 24vw, 16rem);
+    aspect-ratio: 2.3/3;
+    perspective: 1500px;
+    transform-style: preserve-3d;
+    will-change: transform;
+    user-select: none;
+    touch-action: none;
+}
+
+.card-wrapper{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+    animation: floating 3s infinite ease-in-out;
+}
+
+#card-1 .card-wrapper{
+    animation-delay: 0;
+}
+
+#card-2 .card-wrapper{
+    animation-delay: 0.25s;
+}
+
+#card-3 .card-wrapper{
+    animation-delay: 0.4s;
+}
+
+#card-4 .card-wrapper{
+    animation-delay: 0.6s;
+}
+
+.card-inner{
+    position: relative;
+    width: 100%;
+    height: 100%;
+    perspective: 1500px;
+    transform-style: preserve-3d;
+    will-change: transform;
+}
+
+.card-front, .card-back{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    overflow: hidden;
+}
+
+.card-back{
+    padding: 2.5em 1.3em;
+    background-color: #fff;
+    color: #000;
+    transform: rotateY(180deg);
+}
+
+@keyframes floating {
+    0%{
+        transform: translate(-50%, -50%);
+    }
+    50%{
+        transform: translate(-50%, -60%);
+    }
+    100%{
+        transform: translate(-50%, -50%);
+    }
+}

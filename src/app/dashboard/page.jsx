@@ -153,7 +153,7 @@ export default function DashboardOverview() {
                     error={error}
                 />
             {/* transaction history */}
-                <div className="p-[clamp(0.875rem,2vw,1.5rem)] rounded-3xl bg-[#05070e] border border-white/10 overflow-hidden ">
+            <div className=" 2xl:col-span-2 p-[clamp(0.875rem,2vw,1.5rem)] rounded-3xl bg-[#05070e] border border-white/10 overflow-hidden ">
                 <TransactionHistory myAccounts={accounts} />
             </div>
             </div>

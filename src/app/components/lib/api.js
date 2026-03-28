@@ -9,6 +9,9 @@ const api = axios.create({
 });
 
 
+// Protected routes that require authentication — redirect to home on 401
+const PROTECTED_ROUTES = ['/dashboard'];
+
 // an interceptor to handle 401 unauthorized responses (e.g., token expiry)
 api.interceptors.response.use(
   (response) => {
@@ -17,8 +20,10 @@ api.interceptors.response.use(
   (error) => {
     if (error.response && error.response.status === 401) {
       if (typeof window !== 'undefined') {
+        const pathname = window.location.pathname;
+        const isProtected = PROTECTED_ROUTES.some((route) => pathname.startsWith(route));
 
-        if (window.location.pathname !== '/') {
+        if (isProtected) {
             window.location.href = '/';
         }
       }

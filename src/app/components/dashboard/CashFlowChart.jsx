@@ -221,7 +221,7 @@ export default function CashFlowChart({
                         ) : !chartLoading ? (
                             <div className="absolute inset-0 flex flex-col items-center justify-center text-gray-500">
                                 <TrendingUp className="w-12 h-12 mb-3 opacity-20" />
-                                <p>No transaction history for this account.</p>
+                                <p>No transactions in last 7 days for this account.</p>
                             </div>
                         ) : null}
                     </div>

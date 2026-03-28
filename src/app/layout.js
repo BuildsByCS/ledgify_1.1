@@ -15,6 +15,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className="antialiased">
+       <div className="max-w-[1920px] mx-auto">
         <StoreProvider>
           <SmoothScroll>
             <GridBackground />
@@ -24,6 +25,7 @@ export default function RootLayout({ children }) {
             <Footer />
           </SmoothScroll>
         </StoreProvider>
+       </div>
       </body>
     </html>
   );

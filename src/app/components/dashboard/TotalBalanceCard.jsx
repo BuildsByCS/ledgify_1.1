@@ -77,7 +77,7 @@ export default function TotalBalanceCard({ totalBalance, selectedAccount, accoun
 
     return (
         // row-start-2 sm:row-start-1
-        <div className=" bg-[#05070e] p-[clamp(0.875rem,2vw,1.5rem)] rounded-3xl border border-white/10 relative overflow-hidden group hover:border-indigo-500/50 transition-all shadow-2xl cursor-pointer">
+        <div className=" bg-[#05070e] p-[clamp(0.875rem,2vw,1.5rem)] rounded-3xl border border-white/10 relative overflow-hidden group hover:border-indigo-500/50 transition-all shadow-2xl">
             {/* glow */}
             <div className="absolute top-0 right-0 w-[clamp(5rem,12vw,8rem)] h-[clamp(5rem,12vw,8rem)] bg-indigo-500/10 rounded-full blur-3xl -mr-10 -mt-10 transition-all group-hover:bg-indigo-500/20" />
 
