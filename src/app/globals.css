@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "./components/Home/cards.css";
+@import "./components/utils/textmaskreveal.css";
 
 @theme {
   --breakpoint-xs: 30rem; /* 480px */

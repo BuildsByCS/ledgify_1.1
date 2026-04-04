@@ -56,12 +56,12 @@ export default function SmoothScroll({ children }) {
             root
             ref={lenisRef}
             options={{
-                autoRaf: false,      // GSAP ticker drives RAF — never double-tick
-                duration: 1.4,       // total scroll travel time (seconds)
+                autoRaf: false,      // GSAP ticker drives RAF, never double-tick
+                duration: 1.7, // total scroll travel time (seconds), higher = slower
                 easing: lenisEasing, // custom quintic ease-out
                 smoothWheel: true,   // smooth mouse-wheel scroll
-                wheelMultiplier: 1,  // 1 = natural feel, increase for faster wheel
-                touchMultiplier: 2,  // slightly amplified for touch momentum
+                wheelMultiplier: 0.8,  // <1 = slower wheel response, 1 = natural feel
+                touchMultiplier: 1.7,  // slightly amplified for touch momentum
                 infinite: false,     // standard bounded scroll
             }}
         >

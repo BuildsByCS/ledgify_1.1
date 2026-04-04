@@ -76,8 +76,8 @@ export default function GridBackground() {
                         top:  ${r * CELL}px;
                         width: ${CELL}px;
                         height: ${CELL}px;
-                        border-right:  1px solid rgba(130, 120, 255, 0.18);
-                        border-bottom: 1px solid rgba(130, 120, 255, 0.18);
+                        border-right:  1px solid rgba(130, 120, 255, 0.12);
+                        border-bottom: 1px solid rgba(130, 120, 255, 0.12);
                         background: transparent;
                         pointer-events: none;
                     `;
@@ -267,8 +267,8 @@ export default function GridBackground() {
                     ];
                 }, 3000);
             } else {
-                // Mobile ≤500px: 4 trails  |  Tablet 501–768px: 5 trails
-                const count = window.innerWidth <= 500 ? 4 : 5;
+                // Mobile ≤500px: 2 trails  |  Tablet 501–768px: 3 trails
+                const count = window.innerWidth <= 500 ? 2 : 3;
                 for (let i = 0; i < count; i++) {
                     activeLoopStops.push(makeTrailLoop(i * (Math.random() * 600 + 300)));
                 }

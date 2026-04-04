@@ -14,8 +14,8 @@ const cardDetails = [
         para: "Balances are computed based on ledger entries. No manual balance mutation. Ever."
     },
     {
-        title: "Verified Transfered",
-        para: "Users & their accounts validity, availability and balance are checked before a transaction even begins."
+        title: "Verified Transfers",
+        para: "Accounts involved in a transaction are checked for its validity, availability & balance before a transaction even begins."
     },
     {
         title: "Atomic Transactions",

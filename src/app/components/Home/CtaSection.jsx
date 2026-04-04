@@ -1,7 +1,8 @@
 'use client';
 
-import TextReveal from "../utils/TextReveal";
 import { useLenis } from 'lenis/react';
+import TextReveal from '../utils/TextReveal';
+import TextMaskReveal from '../utils/TextMaskReveal';
 
 export default function CtaSection() {
     const lenis = useLenis();
@@ -24,16 +25,14 @@ export default function CtaSection() {
 
     return (
         <div className="relative z-[1] flex flex-col my-[6rem] lg:my-[4rem] pt-[clamp(8rem,14vw,24rem)] pb-[clamp(4rem,8vw,12rem)] items-center justify-end text-center">
-            <h2 className="xl-text leading-[1.1] md:leading-tight mb-1 md:mb-0 font-medium tracking-tight">
+            <TextMaskReveal Tag="h2" start="top 80%" className="xl-text leading-[1.1] md:leading-tight mb-1 md:mb-0 font-medium tracking-tight">
                 Get Started in Minutes
-            </h2>
-            <div className="pt-1 md:pt-1 pb-6 lg:pb-6">
-                <p className="small-text text-center text-white/80 leading-tight">
+            </TextMaskReveal>
+            <div className="pt-1 md:pt-1 pb-6 lg:pb-6 w-[80%] sm:w-[50%] xl:w-[22%]">
+                <TextReveal className="base-text text-center text-white/80 leading-tight">
                     Create an account, set up your wallet, and
-                </p>
-                <p className="small-text text-center text-white/80 leading-tight">
                     start managing transactions securely.
-                </p>
+                </TextReveal>
             </div>
             <button
                 onClick={scrollToAuth}

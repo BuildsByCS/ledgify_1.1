@@ -20,8 +20,14 @@ export default function NavBar() {
     useEffect(() => {
         let isScrolling;
 
-        // Ensure initial state is fully visible but allows bottom overflow
-        gsap.set(navRef.current, { clipPath: 'inset(0% 0% -500% 0%)', yPercent: 0 });
+        const OVERLAY_OFFSET = 0.5 + 0.85;
+        gsap.set(navRef.current, { clipPath: 'inset(0% 0% 100% 0%)'});
+        gsap.to(navRef.current, {
+            clipPath: 'inset(0% 0% -500% 0%)',
+            delay: OVERLAY_OFFSET,
+            duration: 1,
+            ease: 'power2.inOut',
+        });
 
         const handleScroll = () => {
             const currentScrollY = window.scrollY;

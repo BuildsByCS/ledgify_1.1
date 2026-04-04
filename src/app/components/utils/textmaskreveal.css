@@ -1,0 +1,9 @@
+
+.text-reveal{
+    opacity: 0;
+    will-change: transform opacity;
+}
+
+.text-reveal *{
+    will-change: transform opacity;
+}

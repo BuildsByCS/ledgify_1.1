@@ -17,31 +17,12 @@ export default function Footer() {
                         Ledgify
                     </CenterLetterStagger>
 
-                    {/* word-by-word reveal, slight delay so it enters after the big heading */}
-                    <TextReveal
-                        as="p"
-                        mode="letters"
-                        className="small-text leading-none"
-                        start="top bottom"
-                        delay={0.1}
-                        yOffset={0}
-                        fromOpacity={0}
-                    >
+                    <TextReveal as="p" className="small-text leading-none">
                         A ledger-driven banking system
                     </TextReveal>
                 </div>
 
-                {/* letter-by-letter reveal for the short copyright string */}
-                <TextReveal
-                    as="p"
-                    mode="letters"
-                    className="small-text leading-none"
-                    start="top bottom"
-                    stagger={0.06}
-                    delay={0.15}
-                    yOffset={0}
-                    fromOpacity={0}
-                >
+                <TextReveal as="p" className="small-text leading-none">
                     © 2026
                 </TextReveal>
             </div>
