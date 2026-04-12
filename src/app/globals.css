@@ -73,9 +73,10 @@ html {
 body {
   background: var(--bg-primary);
   color: var(--text-primary);
-  font-family: 'Plus Jakarta Sans', sans-serif;
   min-height: 100vh;
   overflow-x: hidden;
+  letter-spacing: 0.01em;
+  word-spacing: 0.05em;
 }
 
 /* ─── HIDE NATIVE SCROLLBAR (Lenis handles scroll) ─── */
@@ -107,4 +108,16 @@ body::before {
   pointer-events: none;
   z-index: 2;
   opacity: 0.4;
+}
+
+.landing-overlay-anim {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100svh;
+  background-color: var(--bg-secondary);
+  z-index: 9999;
+  pointer-events: none;
+  clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
+  will-change: clip-path;
 }

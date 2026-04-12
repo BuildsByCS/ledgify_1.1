@@ -166,66 +166,59 @@ export default function NavBar() {
                 </Link>
             </div>
 
-            {user && (
-                    <div className="relative">
-                        <div className='flex items-center justify-end gap-2'>
-                            <button
-                                onClick={toggleDropdown}
-                                className="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center rounded-full overflow-hidden border-2 border-indigo-500/30 hover:border-indigo-500 transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500/50 cursor-pointer"
-                            >
-                                <img
-                                    src={`https://api.dicebear.com/7.x/shapes/svg?seed=${user?.name || 'User'}&backgroundColor=0c0f23`}
-                                    alt="Profile"
-                                    className="w-full h-full object-cover bg-white"
-                                />
-                            </button>
-                            {/* <button
-                                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                                className="relative w-8 h-8 sm:w-10 sm:h-10 p-2 hover:bg-white/10 rounded-full transition-colors focus:outline-none cursor-pointer group flex items-center justify-center"
-                            >
-                                <div className="relative w-6 h-[14px]">
-                                    <span className={`absolute right-0 bg-gray-300 group-hover:bg-white block transition-all duration-300 ease-out h-[2px] rounded-full ${isMobileMenuOpen ? 'w-6 top-1/2 -translate-y-1/2 rotate-45' : 'w-6 top-0'}`}></span>
-                                    <span className={`absolute right-0 top-1/2 -translate-y-1/2 bg-gray-300 group-hover:bg-white block transition-all duration-300 ease-out h-[2px] rounded-full ${isMobileMenuOpen ? 'w-0 opacity-0' : 'w-4 group-hover:w-6'}`}></span>
-                                    <span className={`absolute right-0 bg-gray-300 group-hover:bg-white block transition-all duration-300 ease-out h-[2px] rounded-full ${isMobileMenuOpen ? 'w-6 top-1/2 -translate-y-1/2 -rotate-45' : 'w-5 bottom-0 group-hover:w-6'}`}></span>
-                                </div>
-                            </button> */}
-                        </div>
-
-                        {/* Dropdown Menu */}
-                        {isDropdownOpen && (
-                            <div
-                                ref={dropdownRef}
-                                className="absolute top-full flex flex-col right-0 mt-3 w-56 bg-[#0d1230] border border-white/10 rounded-xl shadow-[0_0_30px_rgba(0,0,0,0.5)] overflow-hidden backdrop-blur-md z-[200]"
-                                style={{ opacity: 0 }} // Start invisible for fromTo
-                            >
-                                <div className="px-4 py-3 border-b border-white/5 bg-white/[0.02]">
-                                    <p className="text-sm font-medium text-white truncate">{user?.name || 'User'}</p>
-                                    <p className="text-xs text-gray-400 truncate">{user?.email || 'No email'}</p>
-                                </div>
-                                <div className="py-2 flex flex-col gap-1">
-                                    <Link
-                                        href="/dashboard"
-                                        onClick={handleDashboardClick}
-                                        className="w-full px-4 py-2 flex items-center gap-3 text-left hover:bg-indigo-500/10 transition-colors cursor-pointer group"
-                                    >
-                                        <div className="flex items-center justify-center p-1.5 rounded-md bg-indigo-500/10 text-indigo-400 group-hover:bg-indigo-500 group-hover:text-white transition-colors">
-                                            <LayoutDashboard size={16} />
-                                        </div>
-                                        <span className="font-medium text-sm text-gray-300 group-hover:text-white transition-colors">Dashboard</span>
-                                    </Link>
-                                    <button
-                                        onClick={handleLogout}
-                                        className="w-full px-4 py-2 flex items-center gap-3 text-left hover:bg-red-500/10 transition-colors cursor-pointer group"
-                                    >
-                                        <div className="flex items-center justify-center p-1.5 rounded-md bg-red-400/10 text-red-400 group-hover:bg-red-500 group-hover:text-white transition-colors">
-                                            <LogOut size={16} />
-                                        </div>
-                                        <span className="font-medium text-sm text-gray-300 group-hover:text-red-400 transition-colors">Logout</span>
-                                    </button>
-                                </div>
-                            </div>
-                        )}
+            {/* Profile Menu Area - Reserved space to prevent hydration layout shift */}
+            {user ? (
+                <div className="relative animate-in fade-in duration-[600ms] fill-mode-both">
+                    <div className='flex items-center justify-end gap-2'>
+                        <button
+                            onClick={toggleDropdown}
+                            className="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center rounded-full overflow-hidden border-2 border-indigo-500/30 hover:border-indigo-500 transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500/50 cursor-pointer"
+                        >
+                            <img
+                                src={`https://api.dicebear.com/7.x/shapes/svg?seed=${user?.name || 'User'}&backgroundColor=0c0f23`}
+                                alt="Profile"
+                                className="w-full h-full object-cover bg-white"
+                            />
+                        </button>
                     </div>
+
+                    {/* Dropdown Menu */}
+                    {isDropdownOpen && (
+                        <div
+                            ref={dropdownRef}
+                            className="absolute top-full flex flex-col right-0 mt-3 w-56 bg-[#0d1230] border border-white/10 rounded-xl shadow-[0_0_30px_rgba(0,0,0,0.5)] overflow-hidden backdrop-blur-md z-[200]"
+                            style={{ opacity: 0 }} // Start invisible for fromTo
+                        >
+                            <div className="px-4 py-3 border-b border-white/5 bg-white/[0.02]">
+                                <p className="text-sm font-medium text-white truncate">{user?.name || 'User'}</p>
+                                <p className="text-xs text-gray-400 truncate">{user?.email || 'No email'}</p>
+                            </div>
+                            <div className="py-2 flex flex-col gap-1">
+                                <Link
+                                    href="/dashboard"
+                                    onClick={handleDashboardClick}
+                                    className="w-full px-4 py-2 flex items-center gap-3 text-left hover:bg-indigo-500/10 transition-colors cursor-pointer group"
+                                >
+                                    <div className="flex items-center justify-center p-1.5 rounded-md bg-indigo-500/10 text-indigo-400 group-hover:bg-indigo-500 group-hover:text-white transition-colors">
+                                        <LayoutDashboard size={16} />
+                                    </div>
+                                    <span className="font-medium text-sm text-gray-300 group-hover:text-white transition-colors">Dashboard</span>
+                                </Link>
+                                <button
+                                    onClick={handleLogout}
+                                    className="w-full px-4 py-2 flex items-center gap-3 text-left hover:bg-red-500/10 transition-colors cursor-pointer group"
+                                >
+                                    <div className="flex items-center justify-center p-1.5 rounded-md bg-red-400/10 text-red-400 group-hover:bg-red-500 group-hover:text-white transition-colors">
+                                        <LogOut size={16} />
+                                    </div>
+                                    <span className="font-medium text-sm text-gray-300 group-hover:text-red-400 transition-colors">Logout</span>
+                                </button>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            ) : (
+                <div className="w-8 h-8 sm:w-10 sm:h-10 pointer-events-none opacity-0"></div>
             )}
         </nav>
     );

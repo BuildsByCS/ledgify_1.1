@@ -21,7 +21,6 @@ const TextMaskReveal = ({
     as: Tag = "p",
     className = "",
     delay = 0,
-    mode = "lines",      // "lines" | "block"
     triggerMode = "scroll", // "scroll" | "load"
     duration = 0.9,
     start = "top bottom",
@@ -29,38 +28,11 @@ const TextMaskReveal = ({
 }) => {
 
     const maskTextContainer = useRef(null);
-    const wrapperRef = useRef(null);
 
     useGSAP(() => {
         const el = maskTextContainer.current;
         const isLoad = triggerMode === "load";
 
-        // ── BLOCK MODE ──────────────────────────────────────────────────────
-        // Animate the element itself (no SplitText). Gradient-safe.
-        if (mode === "block") {
-            gsap.set(el, { yPercent: 100 });
-
-            const animProps = {
-                yPercent: 0,
-                opacity: 1,
-                delay,
-                duration,
-                ease: "power3.out",
-            };
-
-            if (!isLoad) {
-                animProps.scrollTrigger = {
-                    trigger: wrapperRef.current,
-                    start,
-                    markers,
-                };
-            }
-
-            const animation = gsap.to(el, animProps);
-            return () => animation.kill();
-        }
-
-        // ── LINES MODE (default) ─────────────────────────────────────────────
         let split;
         let animation;
 
@@ -68,7 +40,7 @@ const TextMaskReveal = ({
 
         document.fonts.ready.then(() => {
             split = SplitText.create(el, {
-                type: "words, lines",
+                type: "lines",
                 mask: "lines",
                 autoSplit: true,
                 onSplit: (self) => {
@@ -103,18 +75,8 @@ const TextMaskReveal = ({
             if (animation) animation.kill();
         };
 
-    }, { scope: mode === "block" ? wrapperRef : maskTextContainer });
+    }, { scope: maskTextContainer });
 
-    // Block mode needs an overflow-hidden wrapper so the slide-up clips correctly
-    if (mode === "block") {
-        return (
-            <div ref={wrapperRef} className="overflow-hidden">
-                <Tag ref={maskTextContainer} className={className}>
-                    {children ?? text}
-                </Tag>
-            </div>
-        );
-    }
 
     return (
         <Tag ref={maskTextContainer} className={`text-reveal ${className}`.trim()}>

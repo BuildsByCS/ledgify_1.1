@@ -35,7 +35,7 @@ export default function SmoothScroll({ children }) {
         }
 
         gsap.ticker.add(update);
-        gsap.ticker.lagSmoothing(0);
+        // gsap.ticker.lagSmoothing(0);
 
         return () => {
             gsap.ticker.remove(update);
@@ -43,7 +43,15 @@ export default function SmoothScroll({ children }) {
     }, []);
 
     useEffect(() => {
-        // Refresh ScrollTrigger calculations after a route change
+        // 1) instantly reset scroll to top (0,0) across route changes
+        // to fix scroll position carries over to new pages
+        if (lenisRef.current?.lenis) {
+            lenisRef.current.lenis.scrollTo(0, { immediate: true });
+        } else {
+            window.scrollTo(0, 0);
+        }
+
+        // 2) Refresh ScrollTrigger calculations after a route change
         const timeoutId = setTimeout(() => {
             ScrollTrigger.refresh();
         }, 100);

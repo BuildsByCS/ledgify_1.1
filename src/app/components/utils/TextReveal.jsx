@@ -14,6 +14,7 @@ const TextMaskReveal = ({
     className = "",
     delay = 0,
     triggerMode = "scroll", // "scroll" | "load"
+    staggerFrom = "random"
 }) => {
 
     const textContainer = useRef(null);
@@ -30,7 +31,7 @@ const TextMaskReveal = ({
         document.fonts.ready.then(() => {
 
             split = SplitText.create(textContainer.current, {
-                type: "chars, words, lines",
+                type: "words, lines",
                 autoSplit: true,
                 onSplit: (self) => {
                     const wordProps = {
@@ -39,7 +40,7 @@ const TextMaskReveal = ({
                         stagger: {
                             each: 0.060,
                             // amount:0.85,
-                            from: "random",
+                            from: staggerFrom,
                         },
                         duration: 0.6,
                         ease: "power2.out",

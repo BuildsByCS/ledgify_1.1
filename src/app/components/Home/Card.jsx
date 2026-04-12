@@ -19,10 +19,8 @@ const Card = forwardRef(({ id, frontSrc, frontAlt,count, title, para }, ref) => 
           <div className="card-back">
             <div className='flex flex-col h-[100%] justify-between'>
               <h3 className='large-text'>{count}</h3>
-              <div>
-                <h4 className='mid-text pb-[1em] leading-tight'>{title}</h4>
-                <p className='small-text leading-none'>{para}</p>
-              </div>
+              <h4 className='mid-text text-center pb-[1em] leading-tight'>{title}</h4>
+              <p className='small-text leading-tight'>{para}</p>
             </div>
           </div>
         </div>

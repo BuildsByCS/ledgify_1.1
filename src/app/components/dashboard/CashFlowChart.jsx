@@ -165,7 +165,7 @@ export default function CashFlowChart({
 
                 {/* Scrollable Chart */}
                 <div className="flex-1 overflow-x-auto">
-                    <div className="h-[clamp(200px,35vw,420px)] min-w-[700px] w-full relative pb-2 pr-[2px]">
+                    <div className={`h-[clamp(200px,35vw,420px)] ${mounted && !chartLoading && chartData.length > 5 ? "min-w-[700px]" : ""} w-full md:min-w-[700px] relative pb-2 pr-[2px]`}>
                         {mounted && !chartLoading && chartData.length > 0 ? (
                             <ResponsiveContainer width="100%" height="100%" >
                                 <ComposedChart data={chartData} margin={{ top: 20, right: 20, left: 0, bottom: 10 }}>
@@ -219,7 +219,7 @@ export default function CashFlowChart({
                                 </ComposedChart>
                             </ResponsiveContainer>
                         ) : !chartLoading ? (
-                            <div className="absolute inset-0 flex flex-col items-center justify-center text-gray-500">
+                            <div className="absolute inset-0 flex flex-col items-center justify-center small-text text-gray-500">
                                 <TrendingUp className="w-12 h-12 mb-3 opacity-20" />
                                 <p>No transactions in last 7 days for this account.</p>
                             </div>

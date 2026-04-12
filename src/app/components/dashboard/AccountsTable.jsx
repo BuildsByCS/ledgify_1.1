@@ -74,7 +74,7 @@ export default function AccountsTable({ accounts, loading, error }) {
                 ) : error ? (
                     <div className="text-center py-12 text-gray-500 flex flex-col items-center gap-4">
                         <AlertCircle className="w-12 h-12 text-red-500/50" />
-                        <p className="text-red-400">{error}</p>
+                        <p className="text-red-400 small-text">{error}</p>
                     </div>
                 ) : accounts.length === 0 ? (
                     <div className="text-center py-12 text-gray-500 flex flex-col items-center gap-4">

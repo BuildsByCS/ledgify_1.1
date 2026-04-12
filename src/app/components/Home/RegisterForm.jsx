@@ -91,7 +91,7 @@ export default function RegisterForm({ onSuccess, onToast }) {
             <div className="field-row flex flex-col gap-1 sm:gap-[5px]">
                 <label className="text-[0.65rem] sm:text-[0.72rem] font-semibold text-[var(--text-secondary)] tracking-[0.04em] uppercase">Full Name</label>
                 <input className={`auth-input px-3 py-2.5 sm:px-[13px] sm:py-[10px] text-[0.75rem] sm:text-[0.82rem] ${errors.name ? 'error' : ''}`}
-                    placeholder="John Doe" autoComplete="name"
+                    placeholder="Robert Alan" autoComplete="name"
                     {...register('name', { required: 'Name is required', minLength: { value: 2, message: 'Min. 2 characters' } })}
                 />
                 <ErrorMsg message={errors.name?.message} />
@@ -101,7 +101,7 @@ export default function RegisterForm({ onSuccess, onToast }) {
             <div className="field-row flex flex-col gap-1 sm:gap-[5px]">
                 <label className="text-[0.65rem] sm:text-[0.72rem] font-semibold text-[var(--text-secondary)] tracking-[0.04em] uppercase">Email Address</label>
                 <input className={`auth-input px-3 py-2.5 sm:px-[13px] sm:py-[10px] text-[0.75rem] sm:text-[0.82rem] ${errors.email ? 'error' : ''}`}
-                    type="email" placeholder="john@example.com" autoComplete="email"
+                    type="email" placeholder="robert@example.com" autoComplete="email"
                     {...register('email', {
                         required: 'Email is required',
                         pattern: { value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: 'Enter a valid email' },

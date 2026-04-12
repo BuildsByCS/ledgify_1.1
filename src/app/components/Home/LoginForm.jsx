@@ -137,7 +137,7 @@ export default function LoginForm({ onToast }) {
             <div className="field-row flex flex-col gap-1 sm:gap-[5px]">
                 <label className="text-[0.65rem] sm:text-[0.72rem] font-semibold text-[var(--text-secondary)] tracking-[0.04em] uppercase">Email Address</label>
                 <input className={`auth-input px-3 py-2.5 sm:px-[13px] sm:py-[10px] text-[0.75rem] sm:text-[0.82rem] ${errors.email ? 'error' : ''}`}
-                    type="email" placeholder="john@example.com" autoComplete="email"
+                    type="email" placeholder="test@gmail.com" autoComplete="email"
                     {...register('email', {
                         required: 'Email is required',
                         pattern: { value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: 'Enter a valid email' },
@@ -157,7 +157,7 @@ export default function LoginForm({ onToast }) {
                 <div className="input-wrapper">
                     <input className={`auth-input input-with-icon pl-3 pr-9 py-2.5 sm:pl-[13px] sm:pr-[36px] sm:py-[10px] text-[0.75rem] sm:text-[0.82rem] ${errors.password ? 'error' : ''}`}
                         type={showPw ? 'text' : 'password'}
-                        placeholder="Enter your password" autoComplete="current-password"
+                        placeholder="Enter your password e.g test123" autoComplete="current-password"
                         {...register('password', { required: 'Password is required' })}
                     />
                     <button type="button" className="pw-toggle" onClick={() => setShowPw(v => !v)} tabIndex={-1}>

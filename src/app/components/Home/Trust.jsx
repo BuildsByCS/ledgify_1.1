@@ -3,7 +3,7 @@ import TextReveal from "../utils/TextReveal";
 
 export default function Trust() {
     return (
-        <div className="relative z-[1] flex flex-col py-[clamp(4rem,10vw,12rem)]  my-[clamp(4rem,10vw,12rem)] items-center justify-end text-start">
+        <div className="relative z-[1] flex flex-col py-[clamp(10rem,10vw,12rem)]  my-[clamp(4rem,10vw,12rem)] items-center justify-end text-start">
             <TextMaskReveal Tag="h2" start="top 80%" className="w-full text-start large-text leading-tight">
                 A System Designed Around Trust
             </TextMaskReveal>

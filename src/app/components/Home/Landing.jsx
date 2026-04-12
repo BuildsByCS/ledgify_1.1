@@ -17,37 +17,41 @@ const D = {
     h1Line2: OVERLAY_OFFSET + 0.20,
     h1Line3: OVERLAY_OFFSET + 0.30,
     body: OVERLAY_OFFSET + 0.40,
-    authCard: OVERLAY_OFFSET + 0.40,
 };
 
 export default function Landing() {
+    const landingOverlayRef = useRef(null);
     const tagRef = useRef(null);
     const authRef = useRef(null);
 
     useGSAP(() => {
-        // ── 1. Tag pill ────────────────────────────────────────────────────
-        gsap.from(tagRef.current, {
+        const tl = gsap.timeline();
+        tl.to(landingOverlayRef.current, {
+            clipPath: "polygon(0% 0%, 100% 0%, 100% 0%, 0% 0%)",
+            duration: 0.85,
+            delay: 0.4,
+            ease: "power3.inOut"
+        }).from(tagRef.current, {
             opacity: 0,
             y: 18,
             delay: D.tag,
             duration: 0.6,
             ease: "power3.out",
-        });
-
-        // ── 2. Auth card ───────────────────────────────────────────────────
-        gsap.from(authRef.current, {
+        }).from(authRef.current, {
             opacity: 0,
             x: 44,
-            delay: D.authCard,
-            duration: 0.9,
+            duration: 0.6,
             ease: "power3.out",
         });
     });
 
     return (
         <>
-            {/* ── Landing content ─────────────────────────────────────────── */}
-            <div className="landing-container relative z-[2] h-fit pt-50 flex flex-col gap-20 lg:gap-0 lg:flex-row item-center justify-center pb-[clamp(1rem,calc(0.8rem+3vw),4rem)]">
+            {/* CSS Reveal Overlay */}
+            <div ref={landingOverlayRef} className="landing-overlay-anim"></div>
+
+            {/*  Landing content */}
+            <div className="landing-container relative z-[2] h-fit pt-50 flex flex-col gap-20 lg:gap-0 lg:flex-row item-center justify-center pb-[clamp(1rem,calc(0.8rem+3vw),4rem)] overflow-hidden">
 
                 <div className="landing-left md:w-[70%] h-full">
 
@@ -75,8 +79,7 @@ export default function Landing() {
 
                         <TextMaskReveal
                             as="span"
-                            mode="block"
-                            className="block bg-gradient-to-br from-[#6c63ff] via-[#a78bfa] to-[#63b3ed] bg-clip-text text-transparent opacity-0"
+                            className="block text-[var(--accent-light)]"
                             triggerMode="load"
                             delay={D.h1Line2}
                             duration={0.85}
@@ -100,6 +103,7 @@ export default function Landing() {
                         className="landing-body-text md:w-[70%] w-[100%] leading-tight pt-4"
                         triggerMode="load"
                         delay={D.body}
+                        staggerFrom="start"
                     >A ledger-driven banking system where balances aren't guessed,
                         they're calculated, verified, and recorded step by step.
                     </TextReveal>

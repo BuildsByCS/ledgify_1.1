@@ -63,7 +63,7 @@
     transform-style: preserve-3d;
     will-change: transform;
     user-select: none;
-    touch-action: none;
+    /* touch-action: none; */
 }
 
 .card-wrapper{
@@ -111,7 +111,7 @@
 }
 
 .card-back{
-    padding: 2.5em 1.3em;
+    padding: 1em 1.3em 1.8em 1.3em ;
     background-color: #fff;
     color: #000;
     transform: rotateY(180deg);

@@ -268,9 +268,9 @@ export default function GridBackground() {
                 }, 3000);
             } else {
                 // Mobile ≤500px: 2 trails  |  Tablet 501–768px: 3 trails
-                const count = window.innerWidth <= 500 ? 2 : 3;
+                const count = window.innerWidth <= 500 ? 1 : 2;
                 for (let i = 0; i < count; i++) {
-                    activeLoopStops.push(makeTrailLoop(i * (Math.random() * 600 + 300)));
+                    activeLoopStops.push(makeTrailLoop(5000 + i * (Math.random() * 600 + 300)));
                 }
             }
         };

@@ -290,6 +290,7 @@ export default function TransferForm({
     onToChange,
 }) {
     const { register, handleSubmit, watch, setValue, formState: { errors }, reset } = useForm();
+    const [confirmData, setConfirmData] = useState(null);
 
     const selectedFromId = watch('from');
     const selectedToId = watch('to');
@@ -302,10 +303,21 @@ export default function TransferForm({
     /* forward From selection to parent so it can fetch live balance */
     useEffect(() => { onFromChange?.(selectedFromId ?? ''); }, [selectedFromId]);
 
-    const handleSubmitInternal = (data) => { onSubmit(data, reset); };
+    const handleSubmitInternal = (data) => { setConfirmData(data); };
+
+    const confirmTransfer = () => {
+        if (confirmData) {
+            onSubmit(confirmData, reset);
+            setConfirmData(null);
+        }
+    };
+
+    const cancelTransfer = () => {
+        setConfirmData(null);
+    };
 
     return (
-        <div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-0">
+        <div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-0 relative">
 
             {/* ═══ LEFT — Form ═══ */}
             <div className="flex flex-col z-10 lg:border-r min-h-[clamp(26rem,72vh,38rem)] border-white/5 pr-0 lg:pr-[clamp(1.5rem,4vw,2.5rem)] py-[clamp(0.5rem,1.5vw,1rem)]">
@@ -473,6 +485,39 @@ export default function TransferForm({
                     currency={currency}
                 />
             </div>
+
+            {/* Confirmation Popup */}
+            {confirmData && (
+                <div className="absolute inset-0 z-[100] flex items-center justify-center bg-[#050714]/80 backdrop-blur-sm animate-in fade-in duration-200 rounded-2xl">
+                    <div className="bg-[#0d1029] border border-white/10 px-[clamp(0.7rem,4vw,2rem)] py-[clamp(2.2rem,4vw,3rem)] rounded-3xl shadow-2xl max-w-sm w-[97%] animate-in zoom-in-95 duration-200 flex flex-col gap-6">
+                        <div className="flex flex-col gap-3 text-center">
+                            <div className="flex items-center justify-center mx-auto">
+                                <AlertCircle className="w-[clamp(1.5rem,3vw,1.75rem)] h-[clamp(1.5rem,3vw,1.75rem)] text-indigo-400" />
+                            </div>
+                            <h3 className="mid-text font-medium text-white">Confirm Transfer</h3>
+                            <p className="small-text text-gray-400 leading-relaxed">
+                                Are you sure you want to do transaction of <span className="text-indigo-300 font-bold font-mono">Rs {confirmData.amount}</span> to <span className="text-indigo-300 font-bold">{toAcc?.user?.name || 'recipient'}</span>?
+                            </p>
+                        </div>
+                        <div className="flex gap-3">
+                            <button
+                                type="button"
+                                onClick={cancelTransfer}
+                                className="flex-1 py-3.5 px-4 rounded-xl small-text font-medium text-white bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all cursor-pointer"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                type="button"
+                                onClick={confirmTransfer}
+                                className="flex-1 py-3.5 px-4 rounded-xl small-text font-medium text-white bg-indigo-600/20 hover:bg-indigo-500/40 text-indigo-400 hover:text-white transition-all border border-indigo-500/30 hover:border-indigo-400 hover:shadow-[0_0_20px_rgba(79,70,229,0.4)] cursor-pointer"
+                            >
+                                Confirm
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
