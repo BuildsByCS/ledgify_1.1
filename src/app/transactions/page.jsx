@@ -1,13 +1,19 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
+import { useSelector } from 'react-redux';
 import { ArrowLeft } from 'lucide-react';
-import api from '../../components/lib/api';
-import TransferForm from '../../components/dashboard/TransferForm';
-import TransactionHistory from '../../components/dashboard/TransactionHistory';
+import api from '../components/lib/api';
+import TransferForm from '../components/dashboard/TransferForm';
+import TransactionHistory from '../components/dashboard/TransactionHistory';
 
-export default function TransactionsPage() {
+function TransactionsContent() {
+    const { user } = useSelector((state) => state.auth);
+    const searchParams = useSearchParams();
+    const defaultTo = searchParams.get('to') || undefined;
+
     const [isLoading, setIsLoading] = useState(false);
     const [status, setStatus] = useState(null);
     const [myAccounts, setMyAccounts] = useState([]);
@@ -54,15 +60,23 @@ export default function TransactionsPage() {
         setIsLoading(true);
         setStatus(null);
         try {
-            await api.post('/api/transactions', {
-                fromAccount: data.from,
-                toAccount: data.to,
-                amount: Number(data.amount),
-                idempotencyKey: crypto.randomUUID(),
-            });
+            if (user?.systemUser) {
+                await api.post('/api/transactions/system/initial-funds', {
+                    toAccount: data.to,
+                    amount: Number(data.amount),
+                    idempotencyKey: crypto.randomUUID(),
+                });
+            } else {
+                await api.post('/api/transactions', {
+                    fromAccount: data.from,
+                    toAccount: data.to,
+                    amount: Number(data.amount),
+                    idempotencyKey: crypto.randomUUID(),
+                });
+            }
             setStatus({ type: 'success', message: 'Transfer successful! Ledger updated.' });
-            reset();
-            fetchFromBalance(data.from);
+            reset({ to: defaultTo || '' });
+            if (!user?.systemUser) fetchFromBalance(data.from);
         } catch (err) {
             const msg = err.response?.data?.message || err.response?.data?.error || 'Transaction failed. Check details and balance.';
             setStatus({ type: 'error', message: msg });
@@ -73,9 +87,7 @@ export default function TransactionsPage() {
     };
 
     return (
-        <div className="relative w-full bg-black/90 backdrop-blur-sm rounded-[clamp(2rem,4vw,6rem)] space-y-[clamp(4rem,6vw,6rem)] mt-[clamp(8rem,8vw,10rem)] px-[clamp(0.875rem,3vw,2.5rem)] py-[clamp(1.5rem,3vw,4rem)] animate-in fade-in duration-300">
-
-            {/* <div className="absolute inset-0 -mx-[clamp(1rem,4vw,2rem)] bg-black/90 backdrop-blur-sm rounded-b-[clamp(2rem,4vw,6rem)]" /> */}
+        <div className="relative w-full bg-black/90 backdrop-blur-sm rounded-[clamp(2rem,4vw,6rem)] space-y-[clamp(4rem,6vw,6rem)] mt-[clamp(8rem,calc(7rem+8vw),10rem)] px-[clamp(0.875rem,3vw,2.5rem)] py-[clamp(1.5rem,3vw,4rem)] animate-in fade-in duration-300">
 
             {/* Go Back Button */}
             <div className="absolute -top-[clamp(2.5rem,4vw,3rem)]  left-0 sm:left-[clamp(0.875rem,2vw,1.5rem)] z-20">
@@ -89,6 +101,7 @@ export default function TransactionsPage() {
             </div>
 
             <TransferForm
+                isSystemUser={user?.systemUser}
                 myAccounts={myAccounts}
                 allAccounts={allAccounts}
                 allAccountsLoading={allAccountsLoading}
@@ -98,9 +111,18 @@ export default function TransactionsPage() {
                 isLoading={isLoading}
                 onSubmit={handleTransfer}
                 onFromChange={setSelectedFromId}
+                defaultTo={defaultTo}
             />
 
             <TransactionHistory myAccounts={myAccounts} />
         </div>
+    );
+}
+
+export default function TransactionsPage() {
+    return (
+        <Suspense fallback={<div className="mt-32 text-center text-white">Loading component...</div>}>
+            <TransactionsContent />
+        </Suspense>
     );
 }

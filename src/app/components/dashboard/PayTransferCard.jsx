@@ -171,7 +171,7 @@ export default function PayTransferCard() {
 
                 {/* CTA Button */}
                 <Link
-                    href="/dashboard/transactions"
+                    href="/transactions"
                     className="w-full base-text font-medium flex items-center justify-center gap-2.5 bg-indigo-600/20 hover:bg-indigo-500/40 text-indigo-400 hover:text-white py-4 rounded-xl transition-all border border-indigo-500/30 hover:border-indigo-400 hover:shadow-[0_0_20px_rgba(79,70,229,0.4)] mt-1"
                 >
                     <Send className="w-3.5 h-3.5 sm:w-4 sm:h-4 md:w-5 md:h-5" />

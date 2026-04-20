@@ -1,4 +1,5 @@
 'use client';
+import { useState, useEffect } from 'react';
 
 import {
     ComposedChart,
@@ -82,6 +83,20 @@ function CustomActiveDot({ cx, cy, payload }) {
  *   accounts        {Array}
  *   onAccountChange {fn}      — called with new account ID
  */
+// mirror the CSS clamp(200px, 35vw, 420px) in JS so ResponsiveContainer
+// always receives an explicit pixel height this avoids the width/height(-1) error
+function useChartHeight() {
+    const [height, setHeight] = useState(300);
+    useEffect(() => {
+        const compute = () =>
+            setHeight(Math.min(Math.max(200, window.innerWidth * 0.35), 420));
+        compute();
+        window.addEventListener('resize', compute);
+        return () => window.removeEventListener('resize', compute);
+    }, []);
+    return height;
+}
+
 export default function CashFlowChart({
     chartData,
     chartLoading,
@@ -90,6 +105,7 @@ export default function CashFlowChart({
     accounts,
     onAccountChange,
 }) {
+    const chartHeight = useChartHeight();
     return (
         <div className=" bg-[#05070e] rounded-3xl border border-white/10 hover:border-white/40 overflow-hidden p-[clamp(0.5rem,2vw,1.5rem)] animate-in fade-in slide-in-from-bottom-4 duration-500 delay-150 relative shadow-2xl">
             {/* header row */}
@@ -143,8 +159,8 @@ export default function CashFlowChart({
 
                 {/* Fixed Y-Axis Overlay */}
                 {mounted && !chartLoading && chartData.length > 0 && (
-                    <div className="absolute left-0 top-0 h-[clamp(200px,35vw,420px)] w-[60px] z-20 bg-[#05070e] pointer-events-none pb-2 flex flex-col justify-start">
-                        <ResponsiveContainer width="100%" height="100%">
+                    <div className="absolute left-0 top-0 w-[60px] z-20 bg-[#05070e] pointer-events-none flex flex-col">
+                        <ResponsiveContainer width={60} height={chartHeight}>
                             <ComposedChart data={chartData} margin={{ top: 20, right: 0, left: 0, bottom: 10 }}>
                                 <YAxis
                                     domain={['auto', 'auto']}
@@ -165,9 +181,9 @@ export default function CashFlowChart({
 
                 {/* Scrollable Chart */}
                 <div className="flex-1 overflow-x-auto">
-                    <div className={`h-[clamp(200px,35vw,420px)] ${mounted && !chartLoading && chartData.length > 5 ? "min-w-[700px]" : ""} w-full md:min-w-[700px] relative pb-2 pr-[2px]`}>
+                    <div className={`${mounted && !chartLoading && chartData.length > 5 ? "min-w-[500px]" : ""} w-full md:min-w-[700px] relative pr-[2px]`}>
                         {mounted && !chartLoading && chartData.length > 0 ? (
-                            <ResponsiveContainer width="100%" height="100%" >
+                            <ResponsiveContainer width="100%" height={chartHeight}>
                                 <ComposedChart data={chartData} margin={{ top: 20, right: 20, left: 0, bottom: 10 }}>
                                     <defs>
                                         <linearGradient id="balanceGrad" x1="0" y1="0" x2="0" y2="1">

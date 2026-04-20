@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import api from '../lib/api';
 import { Gift } from 'lucide-react';
 
@@ -52,6 +53,7 @@ const PARTICLES = [
  *   onRefresh         {function}
  */
 export default function TotalBalanceCard({ totalBalance, selectedAccount, accountBalance, onRefresh }) {
+    const queryClient = useQueryClient();
     const [loading, setLoading] = useState(false);
     const [status, setStatus] = useState(null);
 
@@ -66,7 +68,8 @@ export default function TotalBalanceCard({ totalBalance, selectedAccount, accoun
                 idempotencyKey: crypto.randomUUID(),
             });
             setStatus({ type: 'success', message: 'Bonus added successfully' });
-            if (onRefresh) onRefresh();
+            // Invalidate all dashboard queries so balance & chart refresh automatically
+            queryClient.invalidateQueries({ queryKey: ['dashboard'] });
         } catch (err) {
             setStatus({ type: 'error', message: err.response?.data?.message || err.response?.data?.error || 'Failed to add bonus' });
         } finally {

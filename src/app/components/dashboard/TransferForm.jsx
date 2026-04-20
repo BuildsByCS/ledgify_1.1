@@ -276,8 +276,10 @@ function PreviewPanel({ fromAcc, toAcc, amount, status, currency }) {
  *   onSubmit           {fn(data,reset)} — called on form submit
  *   onFromChange       {fn(id)}         — called when "From" account changes (for live balance)
  *   onToChange         {fn(id)}         — called when "To" account changes
+ *   isSystemUser       {bool}           — whether user is a system user doing deposits
  */
 export default function TransferForm({
+    isSystemUser,
     myAccounts,
     allAccounts,
     allAccountsLoading,
@@ -288,15 +290,24 @@ export default function TransferForm({
     onSubmit,
     onFromChange,
     onToChange,
+    defaultTo,
 }) {
-    const { register, handleSubmit, watch, setValue, formState: { errors }, reset } = useForm();
+    const { register, handleSubmit, watch, setValue, formState: { errors }, reset } = useForm({
+        defaultValues: { to: defaultTo || '' }
+    });
+
+    useEffect(() => {
+        if (defaultTo) {
+            setValue('to', defaultTo);
+        }
+    }, [defaultTo, setValue]);
     const [confirmData, setConfirmData] = useState(null);
 
     const selectedFromId = watch('from');
     const selectedToId = watch('to');
     const amountWatch = watch('amount');
 
-    const fromAcc = myAccounts.find(a => a._id === selectedFromId) ?? null;
+    const fromAcc = isSystemUser ? { _id: 'SYSTEM', status: 'ACTIVE', currency: 'INR' } : (myAccounts.find(a => a._id === selectedFromId) ?? null);
     const toAcc = allAccounts.find(a => a._id === selectedToId) ?? null;
     const currency = fromAcc?.currency ?? 'INR';
 
@@ -353,53 +364,62 @@ export default function TransferForm({
                 <form onSubmit={handleSubmit(handleSubmitInternal)} className="flex flex-col flex-1 gap-[clamp(1rem,3vw,1.5rem)]">
 
                     {/* From Account */}
-                    <div>
-                        <FieldLabel>From Account (sender)</FieldLabel>
-                        <div className="relative">
-                            {myAccounts.length > 0 ? (
-                                <select
-                                    style={{ background: 'rgba(99,102,241,0.05)' }}
-                                    className="w-full font-mono small-text text-indigo-300 border border-white/8 rounded-xl px-[clamp(0.625rem,2vw,1rem)] py-[clamp(0.375rem,1vw,0.625rem)] focus:outline-none focus:ring-1 focus:ring-indigo-500/40 transition-all appearance-none cursor-pointer hover:border-indigo-500/30 pr-10"
-                                    {...register('from', { required: 'Please select an account' })}>
-                                    <option value="" className="bg-[#0c0f23] text-gray-400">Select your account…</option>
-                                    {myAccounts.map(acc => (
-                                        <option key={acc._id} value={acc._id} className="bg-[#0c0f23] text-indigo-300">
-                                            {acc._id} - ({acc.status})
-                                        </option>
-                                    ))}
-                                </select>
-                            ) : (
-                                <input type="text" placeholder="Enter source account ID"
-                                    className="w-full font-mono small-text text-indigo-300 bg-indigo-500/5 border border-white/8 rounded-xl px-[clamp(0.625rem,2vw,1rem)] py-[clamp(0.375rem,1vw,0.625rem)] focus:outline-none focus:ring-1 focus:ring-indigo-500/40 transition-all placeholder:text-gray-600 pr-10"
-                                    {...register('from', { required: 'Sender Account ID is required' })} />
-                            )}
+                    {isSystemUser ? (
+                        <div>
+                            <FieldLabel>From Account (sender)</FieldLabel>
+                            <div className="w-full font-mono small-text text-indigo-300 bg-indigo-500/10 border border-indigo-500/30 rounded-xl px-[clamp(0.625rem,2vw,1rem)] py-[clamp(0.375rem,1vw,0.625rem)] opacity-80 cursor-not-allowed">
+                                System Treasury
+                            </div>
+                        </div>
+                    ) : (
+                        <div>
+                            <FieldLabel>From Account (sender)</FieldLabel>
+                            <div className="relative">
+                                {myAccounts.length > 0 ? (
+                                    <select
+                                        style={{ background: 'rgba(99,102,241,0.05)' }}
+                                        className="w-full font-mono small-text text-indigo-300 border border-white/8 rounded-xl px-[clamp(0.625rem,2vw,1rem)] py-[clamp(0.375rem,1vw,0.625rem)] focus:outline-none focus:ring-1 focus:ring-indigo-500/40 transition-all appearance-none cursor-pointer hover:border-indigo-500/30 pr-10"
+                                        {...register('from', { required: 'Please select an account' })}>
+                                        <option value="" className="bg-[#0c0f23] text-gray-400">Select your account…</option>
+                                        {myAccounts.map(acc => (
+                                            <option key={acc._id} value={acc._id} className="bg-[#0c0f23] text-indigo-300">
+                                                {acc._id} - ({acc.status})
+                                            </option>
+                                        ))}
+                                    </select>
+                                ) : (
+                                    <input type="text" placeholder="Enter source account ID"
+                                        className="w-full font-mono small-text text-indigo-300 bg-indigo-500/5 border border-white/8 rounded-xl px-[clamp(0.625rem,2vw,1rem)] py-[clamp(0.375rem,1vw,0.625rem)] focus:outline-none focus:ring-1 focus:ring-indigo-500/40 transition-all placeholder:text-gray-600 pr-10"
+                                        {...register('from', { required: 'Sender Account ID is required' })} />
+                                )}
 
-                            {/* Inline copy button */}
+                                {/* Inline copy button */}
+                                {selectedFromId && (
+                                    <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                                        <CopyButton text={selectedFromId} />
+                                    </div>
+                                )}
+                            </div>
+                            {errors.from && <p className="small-text text-red-400 mt-1">{errors.from.message}</p>}
+
                             {selectedFromId && (
-                                <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                                    <CopyButton text={selectedFromId} />
+                                <div className="flex items-center justify-between mt-[clamp(0.375rem,1vw,0.5rem)] px-1">
+                                    <div className="flex items-center gap-2">
+                                        <span className="small-text text-gray-500">Live Balance:</span>
+                                        {balanceLoading ? (
+                                            <div className="w-3 h-3 border border-gray-600 border-t-indigo-400 rounded-full animate-spin" />
+                                        ) : fromBalance !== null ? (
+                                            <span className="small-text font-semibold font-mono text-emerald-400">
+                                                {fromAcc?.currency === 'INR' ? '₹' : '$'}{Number(fromBalance).toLocaleString('en-IN')}
+                                            </span>
+                                        ) : (
+                                            <span className="small-text text-gray-600 italic">unavailable</span>
+                                        )}
+                                    </div>
                                 </div>
                             )}
                         </div>
-                        {errors.from && <p className="small-text text-red-400 mt-1">{errors.from.message}</p>}
-
-                        {selectedFromId && (
-                            <div className="flex items-center justify-between mt-[clamp(0.375rem,1vw,0.5rem)] px-1">
-                                <div className="flex items-center gap-2">
-                                    <span className="small-text text-gray-500">Live Balance:</span>
-                                    {balanceLoading ? (
-                                        <div className="w-3 h-3 border border-gray-600 border-t-indigo-400 rounded-full animate-spin" />
-                                    ) : fromBalance !== null ? (
-                                        <span className="small-text font-semibold font-mono text-emerald-400">
-                                            {fromAcc?.currency === 'INR' ? '₹' : '$'}{Number(fromBalance).toLocaleString('en-IN')}
-                                        </span>
-                                    ) : (
-                                        <span className="small-text text-gray-600 italic">unavailable</span>
-                                    )}
-                                </div>
-                            </div>
-                        )}
-                    </div>
+                    )}
 
                     {/* divider */}
                     <div className="flex items-center gap-[clamp(0.5rem,1.5vw,0.75rem)]">

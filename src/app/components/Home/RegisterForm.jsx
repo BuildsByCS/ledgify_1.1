@@ -56,12 +56,11 @@ export default function RegisterForm({ onSuccess, onToast }) {
         setIsLoading(true);
         gsap.to(btnRef.current, { scale: 0.97, duration: 0.1 });
         try {
-            await api.post('/api/auth/register', {
-                username: data.name,
+            const res = await api.post('/api/auth/register', {
+                name: data.name,
                 email: data.email,
                 password: data.password,
             });
-
             gsap.to(btnRef.current, { scale: 1, duration: 0.2 });
             onToast({ type: 'success', message: '🎉 Account created! Please log in.' });
             reset();

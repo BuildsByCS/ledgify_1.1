@@ -146,14 +146,6 @@ export default function TransactionHistory({ myAccounts = [] }) {
     const [error, setError] = useState(null);
     const scrollRef = useRef(null);
 
-    /* Stop Lenis from intercepting wheel events inside the scroll area */
-    // useEffect(() => {
-    //     const el = scrollRef.current;
-    //     if (!el) return;
-    //     const block = (e) => { e.stopPropagation(); };
-    //     el.addEventListener('wheel', block, { passive: true, capture: true });
-    //     return () => el.removeEventListener('wheel', block, { capture: true });
-    // }, []);
 
     /* Fetch page 1 whenever account changes */
     useEffect(() => {

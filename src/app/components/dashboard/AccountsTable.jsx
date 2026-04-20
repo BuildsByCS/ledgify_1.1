@@ -1,8 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import Link from 'next/link';
-import { CheckCircle, XCircle, Snowflake, Wallet, AlertCircle, PlusCircle } from 'lucide-react';
+import { CheckCircle, XCircle, Snowflake, Wallet, AlertCircle, PlusCircle, Loader2 } from 'lucide-react';
 import api from '../lib/api';
 import AccountDetailModal from './AccountDetailModal';
 
@@ -27,6 +26,7 @@ export default function AccountsTable({ accounts, loading, error }) {
     const [accountBalance, setAccountBalance] = useState([]);
     const [selectedAccount, setSelectedAccount] = useState(null);
     const [selectedBalance, setSelectedBalance] = useState(null);
+    const [creating, setCreating] = useState(false);
 
     /* keep local copy in sync if parent re-fetches */
     useEffect(() => { setLocalAccounts(accounts); }, [accounts]);
@@ -37,6 +37,23 @@ export default function AccountsTable({ accounts, loading, error }) {
             setAccountBalance((prev) => [...prev, balance.data.balance]);
         });
     }, [localAccounts])
+
+    const handleCreateAccount = async () => {
+        if (creating) return;
+        setCreating(true);
+        try {
+            const res = await api.post('/api/accounts/create');
+            const newAccount = res.data?.account ?? res.data;
+            setLocalAccounts((prev) => [...prev, newAccount]);
+            /* fetch balance for the new account */
+            const balRes = await api.get(`/api/accounts/balance/${newAccount._id}`);
+            setAccountBalance((prev) => [...prev, balRes.data.balance]);
+        } catch (err) {
+            console.error('Failed to create account:', err);
+        } finally {
+            setCreating(false);
+        }
+    };
 
     const handleRowClick = (acc, idx) => {
         setSelectedAccount(acc);
@@ -57,13 +74,15 @@ export default function AccountsTable({ accounts, loading, error }) {
             {/* Table header bar */}
             <div className="p-[clamp(0.875rem,2vw,1.5rem)] border-b border-white/5 flex justify-between items-center bg-white/[0.02]">
                 <h2 className="mid-text font-medium">Your Accounts</h2>
-                <Link
-                    href="/dashboard/create-account"
-                    className="small-text flex items-center gap-1 sm:gap-2 bg-indigo-500/20 text-indigo-400 hover:bg-indigo-500/30 px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg transition-all font-medium border border-indigo-500/30"
+                <button
+                    onClick={handleCreateAccount}
+                    disabled={creating}
+                    className="small-text flex items-center gap-1 sm:gap-2 bg-indigo-500/20 text-indigo-400 hover:bg-indigo-500/30 px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg transition-all font-medium border border-indigo-500/30 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
                 >
-                    <PlusCircle className="w-3 h-3 sm:w-4 sm:h-4" />
-                    <span>New Account</span>
-                </Link>
+                    {creating
+                        ? <><Loader2 className="w-3 h-3 sm:w-4 sm:h-4 animate-spin" /><span>Creating…</span></>
+                        : <><PlusCircle className="w-3 h-3 sm:w-4 sm:h-4" /><span>New Account</span></>}
+                </button>
             </div>
 
             <div className="p-[clamp(0.875rem,2vw,1.5rem)]">
@@ -85,12 +104,15 @@ export default function AccountsTable({ accounts, loading, error }) {
                             <p className="mid-text font-medium text-gray-300">No accounts found</p>
                             <p className="small-text mt-1">Create an account to start managing your funds.</p>
                         </div>
-                        <Link
-                            href="/dashboard/create-account"
-                            className="mt-2 bg-indigo-600 hover:bg-indigo-500 text-white px-6 py-2 rounded-lg font-medium transition-all shadow-[0_0_15px_rgba(79,70,229,0.3)] hover:shadow-[0_0_20px_rgba(79,70,229,0.5)]"
+                        <button
+                            onClick={handleCreateAccount}
+                            disabled={creating}
+                            className="mt-2 bg-indigo-500/20 text-indigo-400 hover:bg-indigo-500/30 px-6 py-2 rounded-lg font-medium transition-all border border-indigo-500/30 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed flex items-center gap-2"
                         >
-                            Create Account
-                        </Link>
+                            {creating
+                                ? <><Loader2 className="w-4 h-4 animate-spin" />Creating…</>
+                                : 'Create Account'}
+                        </button>
                     </div>
                 ) : (
                     <div className="overflow-x-auto">

@@ -1,16 +1,17 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { Menu, LogOut, LayoutDashboard } from 'lucide-react';
-import { usePathname } from 'next/navigation';
+import { useRouter } from 'next/navigation';
+import { LogOut, LayoutDashboard, Shield } from 'lucide-react';
 import Link from 'next/link';
 import { useSelector, useDispatch } from 'react-redux';
-import { logoutUser } from '../../lib/features/auth/authSlice';
+import { useQueryClient } from '@tanstack/react-query';
+import { forceLogout } from '../../lib/features/auth/authSlice';
+import api from '../components/lib/api';
 import gsap from 'gsap';
 
 export default function NavBar() {
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const navRef = useRef(null);
     const lastScrollY = useRef(0);
 
@@ -86,10 +87,21 @@ export default function NavBar() {
 
     const { user } = useSelector((state) => state.auth);
     const dispatch = useDispatch();
+    const queryClient = useQueryClient();
+    const router = useRouter();
+
     const logout = async () => {
-        await dispatch(logoutUser());
+        try {
+            await api.post('/api/auth/logout');
+        } catch (_) {
+            // proceed with local logout even if server call fails
+        }
+        // Wipe the entire query cache so no user-specific data
+        // (balances, accounts, transactions) can leak to the next login
+        queryClient.clear();
+        dispatch(forceLogout());
+        router.push('/');
     };
-    const pathname = usePathname();
 
     const toggleDropdown = (e) => {
         e.stopPropagation();
@@ -204,6 +216,18 @@ export default function NavBar() {
                                     </div>
                                     <span className="font-medium text-sm text-gray-300 group-hover:text-white transition-colors">Dashboard</span>
                                 </Link>
+                                {user?.systemUser && (
+                                    <Link
+                                        href="/systemboard"
+                                        onClick={handleDashboardClick}
+                                        className="w-full px-4 py-2 flex items-center gap-3 text-left hover:bg-indigo-500/10 transition-colors cursor-pointer group"
+                                    >
+                                        <div className="flex items-center justify-center p-1.5 rounded-md bg-indigo-500/10 text-indigo-400 group-hover:bg-indigo-500 group-hover:text-white transition-colors">
+                                            <Shield size={16} />
+                                        </div>
+                                        <span className="font-medium text-sm text-gray-300 group-hover:text-white transition-colors">SystemBoard</span>
+                                    </Link>
+                                )}
                                 <button
                                     onClick={handleLogout}
                                     className="w-full px-4 py-2 flex items-center gap-3 text-left hover:bg-red-500/10 transition-colors cursor-pointer group"
